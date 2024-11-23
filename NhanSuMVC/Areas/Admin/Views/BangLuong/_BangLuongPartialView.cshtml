@@ -1,0 +1,94 @@
+﻿@model List<NhanSuMVC.Models.ViewModels.LuongVM>
+@{
+    bool hasData = Model != null && Model.Count > 0; 
+}
+<table class="table table-bordered table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th rowspan="2"  style="width: 5%;">STT</th>
+            <th rowspan="2"  style="width: 8%;">Mã NV</th>
+            <th rowspan="2"  style="width: 12%;">Họ tên</th>
+            <th rowspan="2" style="width: 12%;">Lương cơ bản</th>
+            <th rowspan="2" style="width: 8%;">Ngày công thực tế</th>
+            <th colspan="5" style="width: 32%;">Các khoản phụ cấp</th>
+            <th colspan="4" style="width: 32%;">Tiền tăng ca</th>
+            <th rowspan="2" style="width: 6%;">Tổng thưởng</th>
+            <th rowspan="2" style="width: 6%;">Tổng phạt</th>
+            <th colspan="4" style="width: 32%;">Khấu trừ bảo hiểm NLĐ</th>
+            <th colspan="4" style="width: 32%;">Công ty đóng bảo hiểm</th>
+            <th rowspan="2" style="width: 6%;">Giảm trừ bản thân</th>
+            <th rowspan="2" style="width: 6%;">Thuế TNCN</th>
+            <th rowspan="2" style="width: 6%;">Tạm ứng</th>
+            <th rowspan="2" style="width: 6%;">Tổng thu nhập</th>
+
+            <th rowspan="2" class="sticky-column" style="width: 12%;">Lương thực lãnh</th>
+        </tr>
+        <tr>
+            <th>Phụ cấp ăn trưa</th>
+            <th>Phụ cấp xăng xe</th>
+            <th>Phụ cấp điện thoại</th>
+            <th>Phụ cấp khác</th>
+            <th>Tổng phụ cấp</th>
+            <th>Tăng ca ngày thường</th>
+            <th>Tăng ca ngày lễ</th>
+            <th>Tăng ca T7, CN</th>
+            <th>Tổng tiền tăng ca</th>
+            <th>BHXH</th>
+            <th>BHYT</th>
+            <th>BHTN</th>
+            <th>Tổng khấu trừ</th>
+            <th>BHXH</th>
+            <th>BHYT</th>
+            <th>BHTN</th>
+            <th>Tổng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (hasData)
+        {
+            int index = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@index</td>
+                    <td>@item.MaNV</td>
+                    <td>@item.HoTen</td>
+                    <td>@String.Format("{0:N0}", item.LuongCB)</td>
+                    <td>@item.NgayCongThucTe</td>
+                    <td>@String.Format("{0:N0}", item.PhuCapAnTrua)</td>
+                    <td>@String.Format("{0:N0}", item.PhuCapXangXe)</td>
+                    <td>@String.Format("{0:N0}", item.PhuCapDienThoai)</td>
+                    <td>@String.Format("{0:N0}", item.PhuCapKhac)</td>
+                    <td>@String.Format("{0:N0}", item.TongPhuCap)</td>
+                    <td>@String.Format("{0:N0}", item.TongTCThuong)</td>
+                    <td>@String.Format("{0:N0}", item.TongTCLe)</td>
+                    <td>@String.Format("{0:N0}", item.TongTCNghi)</td>
+                    <td>@String.Format("{0:N0}", item.TongTienTC)</td>
+                    <td>@String.Format("{0:N0}", item.TongThuong)</td>
+                    <td>@String.Format("{0:N0}", item.TongPhat)</td>
+                    <td>@String.Format("{0:N0}", item.BHXH_NLD)</td>
+                    <td>@String.Format("{0:N0}", item.BHYT_NLD)</td>
+                    <td>@String.Format("{0:N0}", item.BHTN_NLD)</td>
+                    <td>@String.Format("{0:N0}", item.BHXH_NLD + item.BHYT_NLD + item.BHTN_NLD)</td>
+                    <td>@String.Format("{0:N0}", item.BHXH_DN)</td>
+                    <td>@String.Format("{0:N0}", item.BHYT_DN)</td>
+                    <td>@String.Format("{0:N0}", item.BHTN_DN)</td>
+                    <td>@String.Format("{0:N0}", item.BHXH_DN + item.BHYT_DN + item.BHTN_DN)</td>
+                    <td>@String.Format("{0:N0}", 11000000)</td>
+                    <td>@String.Format("{0:N0}", item.ThueTNCN)</td>
+                    <td>@String.Format("{0:N0}", item.TongTU)</td>
+                    <td>@String.Format("{0:N0}", item.TongThuNhap)</td>
+                    <td>@String.Format("{0:N0}", item.LuongThucLanh)</td>
+
+                </tr>
+                index++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="28">Không có dữ liệu để hiển thị</td>
+            </tr>
+        }
+    </tbody>
+</table>

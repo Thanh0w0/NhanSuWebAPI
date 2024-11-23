@@ -1,0 +1,120 @@
+﻿@model List<NhanSuMVC.Models.ViewModels.LuongVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_NhanVienLayout.cshtml";
+}
+
+<div class="container my-3">
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="card p-4 mb-3">
+                <form method="get" asp-action="Index">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <!-- Chọn năm với Bootstrap styling -->
+                        <div class="form-group mb-0 d-flex align-items-center">
+                            <label for="yearSelect" class="mr-2 mb-0">Chọn năm:</label>
+                            <select id="yearSelect" name="year" class="form-select" style="width: 150px;">
+                                @for (int year = DateTime.Now.Year; year >= 2020; year--)
+                                {
+                                    <option value="@year" @(year == ViewBag.SelectedYear ? "selected" : "")>@year</option>
+                                }
+                            </select>
+                            <button type="button" id="showSalary" class="btn btn-primary">Tìm</button>
+                        </div>
+
+                        <!-- Nút Tìm và Xuất Excel -->
+                        <div class="btn-group">
+                            
+                            <button type="button" id="btnExportExcel" class="btn  btn-success">Xuất Excel</button>
+                        </div>
+                    </div>
+
+                    <!-- Bảng hiển thị dữ liệu lương -->
+                    <div id="salaryTable" class="table-responsive" style="margin-top: 20px;" data-mdb-fixed-header="true">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Card hiển thị biểu đồ -->
+    <div class="row">
+        <div class="col">
+            <div class="card p-4 mb-3">
+                <h4>Biểu đồ lương nhân viên năm @ViewBag.SelectedYear</h4>
+                <canvas id="salaryChart" style="height: 400px;"></canvas>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        $(document).ready(function () {
+            var salaryChart;
+
+            // Hàm vẽ biểu đồ
+            function renderChart(labels, data) {
+                const ctx = document.getElementById('salaryChart').getContext('2d');
+
+                if (salaryChart) {
+                    salaryChart.destroy(); // Hủy biểu đồ cũ nếu tồn tại
+                }
+
+                salaryChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Lương Thực Lãnh',
+                            data: data,
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderWidth: 2,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            $('#showSalary').click(function () {
+                var year = $('#yearSelect').val();
+
+                $.get('@Url.Action("LayLuongNV", "NVLuong")', { year: year }, function (data) {
+                    $('#salaryTable').html(data);
+
+                    $.get('@Url.Action("TKLuongNVTheoNam", "NVLuong")', { year: year }, function (chartData) {
+                        const labels = chartData.map(item => `Tháng ${item.thang}`);
+                        const dataLuongThucLanh = chartData.map(item => item.luongThucLanh);
+
+                        renderChart(labels, dataLuongThucLanh);
+                    }).fail(function () {
+                        alert("Có lỗi xảy ra khi lấy dữ liệu biểu đồ.");
+                    });
+                }).fail(function () {
+                    alert("Có lỗi xảy ra khi lấy dữ liệu lương.");
+                });
+            });
+
+            // Xuất Excel khi nhấn nút Xuất Excel
+            $('#btnExportExcel').click(function () {
+                var year = $('#yearSelect').val();
+                window.location.href = '@Url.Action("ExportExcel", "NVLuong")?year=' + year;
+            });
+
+        });
+    </script>
+}

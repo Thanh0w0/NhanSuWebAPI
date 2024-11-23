@@ -1,0 +1,74 @@
+﻿@using NhanSuMVC.Models;
+@model List<mvcChamCong>
+@{
+    ViewData["Title"] = "ChiTietCongNV";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Tính lương</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("TongCongThang", "ChamCong", new { area = "Admin" })">Tổng hợp công</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("ChiTietCongNV", "ChamCong", new { area = "Admin" })">Chi tiết công</a>
+        </li>
+
+    </ol>
+</nav>
+<div class="card p-4 shadow-sm">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="mb-0">Chi tiết công của nhân viên tháng @ViewBag.SelectedMonth năm @ViewBag.SelectedYear</h4>
+        <button type="button" id="btnExportExcel" class="btn btn-success ml-2" onclick="exportChiTietCong()">Xuất Excel</button>
+    </div>
+    <div>
+        <h5>Mã nhân viên: @ViewBag.MaNV</h5>
+        <h5>Họ tên: @ViewBag.TenNV</h5>
+    </div>
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Ngày chấm công</th>
+                <th scope="col">Giờ vào</th>
+                <th scope="col">Giờ ra</th>
+                <th scope="col">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NgayChamCong.ToString("dd-MM-yyyy")</td>
+                        <td>@item.ThoiGianVao</td>
+                        <td>@item.ThoiGianRa</td>
+                        <td>@item.TrangThaiCC</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">Không có dữ liệu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+ </div>
+
+
+<script>
+    function exportChiTietCong() {
+        const month = '@ViewBag.SelectedMonth';
+        const year = '@ViewBag.SelectedYear';
+        const tenNV = encodeURIComponent('@ViewBag.TenNV');
+        const maNV = '@ViewBag.MaNV';
+
+        window.location.href = '@Url.Action("ExportChiTietCongNV", "ChamCong")?month=' + month + '&year=' + year + '&maNV=' + maNV;
+    }
+</script>

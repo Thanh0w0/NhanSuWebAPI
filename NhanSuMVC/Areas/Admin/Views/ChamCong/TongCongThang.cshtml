@@ -1,0 +1,178 @@
+﻿@model IEnumerable<NhanSuMVC.Models.ViewModels.TongCongThangVM>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "TongCongThang";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var selectedMonth = ViewBag.Thang ?? DateTime.Now.Month; // Tháng mặc định là tháng hiện tại
+    var selectedYear = ViewBag.Nam ?? DateTime.Now.Year;
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Tính lương</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("TongCongThang", "ChamCong", new { area = "Admin" })">Tổng hợp công</a>
+        </li>
+
+    </ol>
+</nav>
+<div class="card p-4">
+    <h2>Tổng hợp công tháng</h2>
+    <form method="get" class="d-flex flex-column mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="form-group mr-3">
+                <label for="monthDropdown" class="mr-2 font-weight-bold">Chọn Tháng:</label>
+                @Html.DropDownList("month", new SelectList(Enumerable.Range(1, 12).Select(m => new { Value = m, Text = m }), "Value", "Text", selectedMonth), new { @class = "form-select d-inline-block", @id = "monthDropdown", style = "width: auto;" })
+
+                <label for="yearDropdown" class="mr-2 font-weight-bold">Chọn Năm:</label>
+                @Html.DropDownList("year", new SelectList(Enumerable.Range(DateTime.Now.Year - 5, 6).Select(y => new { Value = y, Text = y }), "Value", "Text", selectedYear), new { @class = "form-select d-inline-block", @id = "yearDropdown", style = "width: auto;" })
+
+                <button type="submit" class="btn btn-primary" onclick="getTongHopCong()">Lấy Dữ Liệu</button>
+            </div>
+            <div class="d-flex align-items-center">
+                <!-- Dropdown số bản ghi hiển thị -->
+                
+                <button type="button" id="btnSaveTHC" class="btn btn-primary me-2" onclick="saveTongHopCong()">Lưu</button>
+                <button type="button" id="btnExportExcel" class="btn btn-success ml-2" onclick="exportExcel()">Xuất Excel</button>
+            </div>
+        </div>
+
+        <!-- Add margin-top to separate the table from the buttons -->
+        <div class="table-container mt-3">
+            <table class="table table-striped table-bordered table-hover">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Mã NV</th>
+                        <th>Họ tên</th>
+                        <th>Phòng ban</th>
+                        <th>Số ngày công</th>
+                        <th>Số ngày nghỉ (không lương)</th>
+                        <th>Số ngày nghỉ (có lương)</th>
+                        <th>Tổng giờ làm thêm ngày thường</th>
+                        <th>Tổng giờ làm ngày nghỉ</th>
+                        <th>Tổng giờ làm ngày lễ</th>
+                        <th>Tổng giờ làm thực tế</th>
+                        <th>Xem chi tiết</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.MaNV</td>
+                                <td>@item.TenNV</td>
+                                <td>@item.PhongBan</td>
+                                <td>@item.SoNgayCong</td>
+                                <td>@item.SoNgayNghiKhongLuong</td>
+                                <td>@item.SoNgayNghiCoLuong</td>
+                                <td>@item.LamThemNgayThuong</td>
+                                <td>@item.LamNgayNghi</td>
+                                <td>@item.LamNgayLe</td>
+                                <td>@item.TongGioLamThucTe</td>
+                                <td>
+                                    <a asp-area="Admin"
+                                       asp-controller="ChamCong"
+                                       asp-action="ChiTietCongNV"
+                                       asp-route-maNV="@item.MaNV"
+                                       asp-route-month="@selectedMonth"
+                                       asp-route-year="@selectedYear"
+                                       asp-route-tenNV="@item.TenNV">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="11" class="text-center">Không có dữ liệu để hiển thị.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </form>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+    function exportExcel() {
+        // Lấy giá trị tháng và năm từ dropdown
+        var month = document.getElementById("monthDropdown").value;
+        var year = document.getElementById("yearDropdown").value;
+
+        // Chuyển hướng tới action xuất Excel
+        window.location.href = '@Url.Action("ExportExcelCongThang", "ChamCong")?month=' + month + '&year=' + year;
+    }
+    function getTongHopCong() {
+        // Lấy giá trị tháng và năm từ dropdown
+        var month = document.getElementById("monthDropdown").value;
+        var year = document.getElementById("yearDropdown").value;
+
+        // Chuyển hướng tới action xuất Excel
+        window.location.href = '@Url.Action("TongCongThang", "ChamCong")?month=' + month + '&year=' + year;
+    }
+
+    function saveTongHopCong() {
+        // Lấy giá trị tháng và năm từ dropdown
+        var month = document.getElementById("monthDropdown").value;
+        var year = document.getElementById("yearDropdown").value;
+
+        // Lấy dữ liệu từ bảng tổng hợp công
+        var rows = [];
+        document.querySelectorAll("table tbody tr").forEach(row => {
+            let data = {
+                MaNV: row.cells[0].textContent.trim(),
+                Thang: parseInt(month),  // Đảm bảo giá trị là số
+                Nam: parseInt(year),
+                SoNgayCong: parseInt(row.cells[3].textContent.trim()),
+                SoNgayNghiKhongLuong: parseInt(row.cells[4].textContent.trim()),
+                SoNgayNghiCoLuong: parseInt(row.cells[5].textContent.trim()),
+                LamThemNgayThuong: parseFloat(row.cells[6].textContent.trim()),
+                LamNgayNghi: parseFloat(row.cells[7].textContent.trim()),
+                LamNgayLe: parseFloat(row.cells[8].textContent.trim()),
+                TongGioLamThucTe: parseFloat(row.cells[9].textContent.trim())
+            };
+            rows.push(data);
+        });
+
+        // Gửi AJAX request
+        $.ajax({
+            url: '/Admin/ChamCong/Add', // URL đến controller action
+            type: 'POST',
+            data: JSON.stringify(rows), // Chuyển đổi dữ liệu thành chuỗi JSON
+            contentType: 'application/json', // Đảm bảo rằng contentType là 'application/json'
+            success: function (data) {
+                if (data.success) {
+                    alert("Lưu bảng tổng hợp công thành công!");
+                } else {
+                    alert("Có lỗi xảy ra khi lưu dữ liệu: " + data.message);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", xhr.responseText || error);
+                alert("Lỗi khi gửi yêu cầu đến server.");
+            }
+        });
+    }
+
+
+
+</script>

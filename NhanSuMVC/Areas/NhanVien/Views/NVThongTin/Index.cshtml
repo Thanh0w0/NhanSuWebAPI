@@ -1,0 +1,391 @@
+﻿@model NhanSuMVC.Models.ViewModels.NhanVienVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_NhanVienLayout.cshtml";
+}
+
+
+
+<section>
+    <div class="container py-5">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <img src="@Url.Content( Model.NhanVien.HinhAnh)" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                        <h5 class="my-3">@Model.NhanVien.HoTen</h5>
+                        <p class="text-muted mb-1">@Model.NhanVien.ChucVu.TenCV</p>
+                        <p class="text-muted mb-4">@Model.NhanVien.PhongBan.TenPB</p>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="card mb-4 mb-lg-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-4"><span class="text-primary font-italic">Thông tin tài khoản</span></h5>
+                            <div>
+                                <a class="btn btn-primary mb-2 d-inline-block" id="btnOpenTaiKhoan"><i class="fa-regular fa-pen-to-square"></i></a>
+                            </div>
+                        </div>
+
+                        @if (Model.TaiKhoan == null)
+                        {
+                            <div class="text-center">
+                                <p class="text-danger mb-0">Chưa có tài khoản</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th class="col-6">Tên đăng nhập</th>
+                                        <td class="col-6 text-muted">@Model.TaiKhoan.TenDN</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-6">Ngày tạo</th>
+                                        <td class="col-6 text-muted">@Model.TaiKhoan.NgayTao.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-6">Quyền</th>
+                                        <td class="col-6 text-muted">@Model.TaiKhoan.Quyen.TenQuyen</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="d-flex justify-content-between align-items-center mx-3 my-3">
+                                <h5 class="mb-4"><span class="text-primary font-italic me-1">Thông tin nhân viên</span></h5>
+                                
+                            </div>
+                            <div class="col-sm-3">
+                                <p class="mb-0">Mã nhân viên</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.MaNV</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Giới tính</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.GioiTinh</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Ngày sinh</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.NgaySinh.ToString("dd/MM/yyyy")</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">CCCD</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.CCCD</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Dân tộc</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.DanToc</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Tôn giáo</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.TonGiao</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Nơi sinh</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.NoiSinh</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Địa chỉ</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.DiaChi</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Email</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.Email</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">SDT</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.SDT</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Trình độ</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.TrinhDo</p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <p class="mb-0">Trạng thái</p>
+                            </div>
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.TrangThai</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Contract Information -->
+                <div class="row">
+                    <div class="col">
+                        <div class="card mb-4 mb-md-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mx-3 my-3">
+                                    <h5 class="mb-4"><span class="text-primary font-italic me-1">Thông tin hợp đồng</span></h5>
+                                    
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Loại hợp đồng</th>
+                                            <th>Ngày vào làm</th>
+                                            <th>Ngày kết thúc</th>
+                                            <th>Trạng thái</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.HopDong != null && Model.HopDong.Any()) // Kiểm tra nếu có hợp đồng
+                                        {
+                                            foreach (var hd in Model.HopDong)
+                                            {
+                                                <tr>
+                                                    <td>@hd.LoaiHD.TenLoaiHD</td>
+                                                    <td>@hd.NgayVaoLam.ToString("dd/MM/yyyy")</td>
+                                                    <td>@hd.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+
+                                                    <td>@hd.TrangThai</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else // Nếu không có hợp đồng
+                                        {
+                                            <tr>
+                                                <td colspan="5" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allowance Information -->
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="card mb-4 mb-md-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mx-3 my-3">
+                                    <h5 class="mb-4"><span class="text-primary font-italic me-1">Thông tin phụ cấp</span></h5>
+                                   
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Loại phụ cấp</th>
+                                            <th>Số tiền</th>
+                                            <th>Ngày bắt đầu</th>
+                                            <th>Ngày kết thúc</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.PhuCap != null && Model.PhuCap.Any())
+                                        {
+                                            foreach (var pc in Model.PhuCap)
+                                            {
+                                                <tr>
+                                                    <td>@pc.LoaiPC</td>
+                                                    <td>@pc.SoTien</td>
+                                                    <td>@pc.NgayBatDau.ToString("dd/MM/yyyy")</td> <!-- Format the date if needed -->
+                                                    <td>@pc.NgayKetThuc.ToString("dd/MM/yyyy")</td> <!-- Format the date if needed -->
+                                                    
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="editAccountModal" tabindex="-1" aria-labelledby="editAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header " style="background-color: #15B392; color: #ffffff;">
+                <h5 class="modal-title" id="editAccountModalLabel">Chỉnh sửa thông tin tài khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editAccountForm">
+                    <input type="hidden" id="TaiKhoanId" />
+                    <input type="hidden" id="MaNVTK" />
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mật khẩu</label>
+                        <input type="text" class="form-control" id="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="creationDate" class="form-label">Ngày tạo</label>
+                        <input class="form-control" id="creationDate" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Quyền</label>
+                        <select class="form-select" id="role" asp-items=@(ViewBag.Quyens) disabled>
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="SaveTaiKhoan">Lưu</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Edit TÀI KHOẢN
+    $('#btnOpenTaiKhoan').on('click', function () {
+        var accountData = {
+            TaiKhoanId: '@Model.TaiKhoan.MaTK', // Assuming there's a TaiKhoanId in the model
+            MaNVTK: '@Model.TaiKhoan.MaNV',
+            username: '@Model.TaiKhoan.TenDN',
+            creationDate: '@Model.TaiKhoan.NgayTao',
+            role: '@Model.TaiKhoan.Quyen.MaQuyen',
+        };
+
+        // Populate the modal fields with account data
+        $('#TaiKhoanId').val(accountData.TaiKhoanId);
+        $('#MaNVTK').val(accountData.MaNVTK);
+        $('#username').val(accountData.username);
+        $('#password').val(accountData.password);
+        $('#creationDate').val(accountData.creationDate);
+        $('#role').val(accountData.role);
+
+        // Open the modal
+        var modal = new bootstrap.Modal($('#editAccountModal')[0]);
+        modal.show();
+    });
+
+    $('#SaveTaiKhoan').on('click', function () {
+        var accountData = {
+            MaTK: $('#TaiKhoanId').val(),
+            MaNV: $('#MaNVTK').val(),
+            TenDN: $('#username').val(),
+            MatKhau: $('#password').val(),
+            MaQuyen: $('#role').val(),
+            NgayTao: $('#creationDate').val(),
+            TrangThai: $('#status').val()
+        };
+
+        $.ajax({
+            url: '/NhanVien/NVThongTin/EditTaiKhoan',
+            type: 'POST',
+            data: accountData,
+            success: function (response) {
+                if (response.success) {
+                    // Hiển thị thông báo thành công
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Reload lại trang nếu cập nhật thành công
+                    });
+                } else {
+                    // Hiển thị thông báo lỗi
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                // Thông báo khi có lỗi xảy ra
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra khi lưu thông tin tài khoản.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+</script>

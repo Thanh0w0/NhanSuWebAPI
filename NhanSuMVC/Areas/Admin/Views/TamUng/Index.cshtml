@@ -1,0 +1,330 @@
+﻿@model IEnumerable<NhanSuMVC.Models.mvcTamUng>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var selectedMonth = ViewBag.Thang ?? DateTime.Now.Month; // Tháng mặc định là tháng hiện tại
+    var selectedYear = ViewBag.Nam ?? DateTime.Now.Year;
+}
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "TamUng", new { area = "Admin" })">Tạm ứng</a>
+        </li>
+
+    </ol>
+</nav>
+
+
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mx-2 my-2">
+        <h2 style="color: #000B58;">Danh sách tạm ứng</h2>
+
+        <button class="btn btn-primary mb-2 d-inline-block" id="btnAdd" onclick="OpenTamUngModal();">Thêm mới</button>
+    </div>
+    <div class="row">
+        <div class="form-group mx-2 my-2">
+            <label for="monthDropdown" class="mr-2 font-weight-bold">Chọn Tháng:</label>
+            @Html.DropDownList("month", new SelectList(Enumerable.Range(1, 12).Select(m => new { Value = m, Text = m }), "Value", "Text", selectedMonth), new { @class = "form-select d-inline-block", @id = "monthDropdown", style = "width: auto;" })
+
+            <label for="yearDropdown" class="mr-2 font-weight-bold">Chọn Năm:</label>
+            @Html.DropDownList("year", new SelectList(Enumerable.Range(DateTime.Now.Year - 5, 6).Select(y => new { Value = y, Text = y }), "Value", "Text", selectedYear), new { @class = "form-select d-inline-block", @id = "yearDropdown", style = "width: auto;" })
+
+            <button type="button" class="btn btn-primary" onclick="searchTU()">Tìm</button>
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover align-middle">
+        <thead>
+            <tr>
+                
+                <th class="text-center">Mã nhân viên</th>
+                <th class="text-center">Số tiền</th>
+                <th class="text-center">Lý do</th>
+                <th class="text-center">
+                    Ngày tạm ứng
+                </th>
+                <th class="text-center">Trạng thái</th>
+                <th class="text-center">Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr> 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MaNV)
+                    </td>
+                    <td class="text-center">@String.Format("{0:N0}", item.SoTien)</td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LyDo)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.NgayTamUng)
+                    </td>
+                    <td class="text-center">
+                        @Html.DisplayFor(modelItem => item.TrangThai)
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-success btn-sm" onclick="EditTamUng(@item.MaTU); return false;">Chỉnh sửa</button> |
+                        <button class="btn btn-danger btn-sm" onclick="DeleteTamUng(@item.MaTU); return false;">Xóa</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="modal fade" id="TamUngModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #000B58; color: #ffffff;">
+                <h5 class="modal-title" id="TamUngLabel"></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="MaTU" />
+                <div class="mb-3">
+                    <label for="MaNV" class="form-label">Mã nhân viên</label>
+                    <input id="MaNV" class="form-control" />
+
+                </div>
+
+                <div class="mb-3">
+                    <label for="SoTien" class="form-label">Số tiền</label>
+                    <input type="number" id="SoTien" class="form-control" placeholder="Số tiền" />
+                </div>
+                <div class="mb-3">
+                    <label for="LyDo" class="form-label">Lý do</label>
+                    <input id="LyDo" class="form-control" />
+
+                </div>
+                <div class="mb-3">
+                    <label for="NgayTamUng" class="form-label">Ngày tạm ứng</label>
+                    <input type="date" id="NgayTamUng" class="form-control" />
+                </div>
+
+               
+               
+                <div class="mb-3">
+                    <label for="TrangThai" class="form-label">Trạng thái</label>
+                    <select id="TrangThai" class="form-select" required>
+                        <!-- Kiểm tra số ngày nghỉ có lương còn lại -->
+                        <option value="">--Chọn--</option>
+
+                        <option value="Chờ duyệt">Chờ duyệt</option>
+                        <option value="Đã duyệt">Đã duyệt</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="Save" onclick="SaveTamUng();">Lưu</button>
+                <button class="btn btn-success" id="Update" style="display:none" onclick="UpdateTamUng();">Cập nhật</button>
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    function searchTU() {
+        var month = $('#monthDropdown').val();
+
+        var year = $('#yearDropdown').val();
+        window.location.href = '@Url.Action("Index", "TamUng")?month=' + month + '&year=' + year;
+    }
+
+    function OpenTamUngModal() {
+        $('#TamUngLabel').text("Thêm mới tạm ứng");
+        $('#MaNV').val('');
+        $('#SoTien').val('');
+        $('#LyDo').val();
+        $('#NgayTamUng').val('');
+        $('#TrangThai').val('');
+        $('#TamUngModal').modal('show');
+        $('#Update').hide();
+    }
+
+
+    function SaveTamUng() {
+        // Lấy dữ liệu từ form
+        var tamUng = {
+            MaNV: $('#MaNV').val(),
+            SoTien: $('#SoTien').val(),
+            LyDo: $('#LyDo').val(),
+            NgayTamUng: $('#NgayTamUng').val(),
+            TrangThai: $('#TrangThai').val()
+        };
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Add", "TamUng", new { area = "Admin" })',  // Đảm bảo URL này đúng với controller
+            data: tamUng,
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: 'Thêm tạm ứng thành công!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $('#createModal').modal('hide');  // Đóng modal sau khi thêm
+                        location.reload();  // Tải lại trang để hiển thị tạm ứng mới
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Thêm tạm ứng thất bại.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể thêm tạm ứng.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+    function EditTamUng(id) {
+        $.ajax({
+            url: '/Admin/TamUng/Edit?id=' + id,
+            type: 'GET',
+            success: function (response) {
+                if (response) {
+                    // Điền dữ liệu vào form modal
+                    $('#TamUngModal').modal('show');
+                    $('#TamUngLabel').text("Cập nhật tạm ứng");
+                    $('#MaTU').val(response.maTU);
+                    $('#MaNV').val(response.maNV);
+                    $('#SoTien').val(response.soTien);
+                    $('#LyDo').val(response.lyDo); 
+                    $('#NgayTamUng').val(response.ngayTamUng.split('T')[0]);
+                    $('#TrangThai').val(response.trangThai);
+                    $('#Save').hide();
+                    $('#Update').show();
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Không tìm thấy thông tin.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể tải thông tin.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+
+    // Hàm cập nhật chính sách
+    function UpdateTamUng() {
+        var chinhSach = {
+            MaTU: $('#MaTU').val(),
+            MaNV: $('#MaNV').val(),
+            SoTien: $('#SoTien').val(),
+            LyDo: $('#LyDo').val(),
+            NgayTamUng: $('#NgayTamUng').val(),
+            TrangThai: $('#TrangThai').val(),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("Update", "TamUng", new { area = "Admin" })',
+            data: chinhSach,
+            dataType: 'json', // Thêm dòng này
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: 'Cập nhật thành công!',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $('#ChinhSachModal').modal('hide');
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Cập nhật thất bại.',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Không thể cập nhật tạm ứng.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+
+    }
+
+    // Hàm xóa chính sách
+    // Hàm xóa chính sách
+    function DeleteTamUng(id) {
+        Swal.fire({
+            title: 'Bạn có chắc muốn xóa?',
+            text: "Bạn sẽ không thể khôi phục lại dữ liệu này!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Admin/TamUng/Delete?id=' + id,
+                    type: 'POST',
+                    dataType: 'json',  // Đảm bảo rằng phản hồi là JSON
+                    success: function (response) {
+                        console.log(response); // Xem phản hồi trả về
+                        if (response.success) {
+                            Swal.fire(
+                                'Đã xóa!',
+                                'Tạm ứng đã được xóa.',
+                                'success'
+                            ).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire(
+                                'Lỗi!',
+                                response.message || 'Không thể xóa tạm ứng.',
+                                'error'
+                            );
+                        }
+                    }
+
+                });
+            }
+        });
+    }
+</script>
+

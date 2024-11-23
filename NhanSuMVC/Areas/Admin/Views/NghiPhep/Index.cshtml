@@ -1,0 +1,91 @@
+﻿@model IEnumerable<NhanSuMVC.Models.mvcNghiPhep>
+
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "NghiPhep", new { area = "Admin" })">Quản lý nghỉ phép</a>
+        </li>
+       
+    </ol>
+</nav>
+
+
+<div class="card p-4">
+    <h5 class="card-title">Bộ lọc </h5>
+
+    <!-- Form controls -->
+    <div class="row mb-3">
+        <form method="get" action="/Admin/NghiPhep/Index" id="filterForm" class="d-flex">
+            <div class="col-md-4 me-3">
+                <label for="fromDate" class="form-label">Từ ngày</label>
+                <input type="date" class="form-control" id="fromDate" name="fromDate" value="@ViewBag.FromDate?.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="col-md-4 me-3">
+                <label for="toDate" class="form-label">Đến ngày</label>
+                <input type="date" class="form-control" id="toDate" name="toDate" value="@ViewBag.ToDate?.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </div>
+        </form>
+    </div>
+
+
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+
+                <th scope="col">Mã nhân viên</th>
+                <th scope="col">Tên nhân viên</th>
+                <th scope="col">Loại nghỉ phép</th>
+                <th scope="col">Ngày bắt đầu</th>
+                <th scope="col">Ngày kết thúc</th>
+                <th scope="col">Trạng thái</th>
+
+                <th scope="col">#</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>@item.MaNV</td>
+                    <td>@item.NhanVien.HoTen</td>
+                    <td>@item.LoaiNP</td>
+                    <td>@item.TuNgay.ToString("yyyy-MM-dd")</td>
+                    <td>@item.DenNgay.ToString("yyyy-MM-dd")</td>
+
+                    <td>@item.TrangThai</td>
+
+
+
+                    <td>
+                        <div>
+                            <a class="btn btn-success mb-2 d-inline-block" asp-area="Admin" asp-controller="NghiPhep" asp-action="Edit" asp-route-id="@item.MaNP">
+                                <i class="fa-regular fa-pen-to-square"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+
+
+
+<script>
+   
+</script>

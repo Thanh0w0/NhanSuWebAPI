@@ -1,0 +1,73 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Sao lưu dữ liệu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<!-- Nút Sao Lưu -->
+<form id="backupForm" method="post" asp-area="Admin" asp-action="SaoLuu">
+    <div class="form-group">
+        <label for="backupType" class="form-label">Chọn loại file sao lưu:</label>
+        <div class="form-check">
+            <input type="radio" name="backupType" value="json" class="form-check-input" id="jsonBackup" checked>
+            <label class="form-check-label" for="jsonBackup">JSON</label>
+        </div>
+        <div class="form-check">
+            <input type="radio" name="backupType" value="bak" class="form-check-input" id="bakBackup">
+            <label class="form-check-label" for="bakBackup">BAK</label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Sao Lưu Dữ Liệu</button>
+    </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+<script>
+    // Sử dụng jQuery để gửi yêu cầu AJAX khi form được submit
+    $("#backupForm").submit(function (event) {
+        event.preventDefault(); // Ngừng gửi form theo cách truyền thống
+
+        // Lấy loại sao lưu được chọn
+        var backupType = $("input[name='backupType']:checked").val();
+
+        // Gửi yêu cầu AJAX
+        $.ajax({
+            url: '@Url.Action("SaoLuu")',  // URL của action SaoLuu
+            type: 'POST',
+            data: { backupType: backupType },
+            success: function (response) {
+                // Kiểm tra nếu phản hồi trả về thành công
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Thông Báo',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Thông Báo',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi khi gọi API
+                Swal.fire({
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra khi sao lưu dữ liệu.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+</script>

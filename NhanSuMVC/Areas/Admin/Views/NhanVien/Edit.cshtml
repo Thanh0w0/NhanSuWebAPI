@@ -1,0 +1,1333 @@
+﻿@model NhanSuMVC.Models.ViewModels.NhanVienVM
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Edit Employee";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">Danh sách nhân viên</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Create", "NhanVien", new { area = "Admin" })">Hồ sơ nhân viên</a>
+        </li>
+    </ol>
+</nav> 
+<section >
+    <div class="container py-3">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="card mb-4">
+                    <div class="card-body text-center">
+                        <img src="@Url.Content(Model.NhanVien.HinhAnh)" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                        <h5 class="my-3">@Model.NhanVien.HoTen</h5>
+                        <p class="text-muted mb-1">@Model.NhanVien.ChucVu.TenCV</p>
+                        <p class="text-muted mb-4">@Model.NhanVien.PhongBan.TenPB</p>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
+                <div class="card mb-4 mb-lg-0">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center my-3">
+                            <h5 class="mb-4">
+                                <span class="text-primary font-italic me-1">Thông tin tài khoản</span>
+                            </h5>
+                            <div>
+                                @if (Model.TaiKhoan == null)
+                                {
+                                    <a class="btn btn-primary mb-2 d-inline-block text-decoration-none" id="btnAddTaiKhoan">
+                                        <i class="fa-regular fa-plus"></i> Thêm
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="btn btn-primary mb-2 d-inline-block text-decoration-none" id="btnEditTaiKhoan">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </a>
+                                }
+                            </div>
+                        </div>
+
+                        @if (Model.TaiKhoan == null)
+                        {
+                            <!-- Hiển thị khi không có tài khoản -->
+                            <p class="text-danger mb-0 ms-1">Chưa có tài khoản</p>
+                        }
+                        else
+                        {
+                            <!-- Hiển thị thông tin tài khoản khi đã tồn tại -->
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <th class="col-6">Tên đăng nhập</th>
+                                        <td class="col-6 text-muted">@Model.TaiKhoan.TenDN</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-6">Ngày tạo</th>
+                                        <td class="col-6 text-muted">@Model.TaiKhoan.NgayTao.ToString("dd/MM/yyyy")</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-6">Quyền</th>
+                                        <td class="col-6 text-muted">@Model.TaiKhoan.Quyen.TenQuyen</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </div>
+
+
+
+            </div>
+
+
+            <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="row">
+                            <div class="d-flex justify-content-between align-items-center mx-3 my-3">
+                                <h5 class="mb-4"><span class="text-primary font-italic me-1">Thông tin nhân viên</span></h5>
+                                <div>
+                                    <a class="btn btn-primary mb-2 d-inline-block" id="btnAdd" onclick="OpenNhanVien('@Model.NhanVien.MaNV'); return false;"><i class="fa-regular fa-pen-to-square"></i></a>
+                                </div>
+                            </div>
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Mã nhân viên</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.MaNV</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Giới tính</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.GioiTinh</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Ngày sinh</p>
+                                </div>
+                                <div class="col-sm-9">
+                                <p class="text-muted mb-0">@Model.NhanVien.NgaySinh.ToString("dd/MM/yyyy")</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">CCCD</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.CCCD</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Dân tộc</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.DanToc</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Tôn giáo</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.TonGiao</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Nơi sinh</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.NoiSinh</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Địa chỉ</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.DiaChi</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Email</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.Email</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">SDT</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.SDT</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Trình độ</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.TrinhDo</p>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <p class="mb-0">Trạng thái</p>
+                                </div>
+                                <div class="col-sm-9">
+                                    <p class="text-muted mb-0">@Model.NhanVien.TrangThai</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                <!-- Contract Information -->
+                <div class="row">
+                    <div class="col">
+                        <div class="card mb-4 mb-md-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mx-3 my-3">
+                                    <h5 class="mb-4"><span class="text-primary font-italic me-1">Thông tin hợp đồng</span></h5>
+                                    <div>
+                                        <a class="btn btn-primary mb-2 d-inline-block text-decoration-none" onclick="OpenHopDong('@Model.NhanVien.MaNV');">
+                                            <i class="fa-solid fa-plus"></i> Thêm mới
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Loại hợp đồng</th>
+                                            <th>Ngày vào làm</th>
+                                            <th>Ngày kết thúc</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.HopDong != null && Model.HopDong.Any()) // Kiểm tra nếu có hợp đồng
+                                        {
+                                            foreach (var hd in Model.HopDong)
+                                            {
+                                                <tr>
+                                                    <td>@hd.LoaiHD.TenLoaiHD</td>
+                                                    <td>@hd.NgayVaoLam.ToString("dd/MM/yyyy")</td>
+                                                    <td>@hd.NgayKetThuc.ToString("dd/MM/yyyy")</td>
+                                                    <td>
+                                                        <button class="btn btn-success btn-sm" onclick="EditHopDong(@hd.MaHD); return false;"><i class="fa-regular fa-pen-to-square"></i></button> |
+                                                        <button class="btn btn-danger btn-sm" onclick="deleteHopDong(@hd.MaHD); return false;"><i class="fa-solid fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else // Nếu không có hợp đồng
+                                        {
+                                            <tr>
+                                                <td colspan="5" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Allowance Information -->
+                <div class="row mt-4">
+                    <div class="col">
+                        <div class="card mb-4 mb-md-0">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mx-3 my-3">
+                                    <h5 class="mb-4"><span class="text-primary font-italic me-1">Thông tin phụ cấp</span></h5>
+                                    <div>
+                                        <a class="btn btn-primary mb-2 d-inline-block text-decoration-none" onclick="OpenPhuCap('@Model.NhanVien.MaNV');"><i class="fa-solid fa-plus"></i>Thêm mới</a>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Loại phụ cấp</th>
+                                            <th>Số tiền</th>
+                                            <th>Ngày bắt đầu</th>
+                                            <th>Ngày kết thúc</th>
+                                            <th>#</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model.PhuCap != null && Model.PhuCap.Any())
+                                        {
+                                            foreach (var pc in Model.PhuCap)
+                                            {
+                                                <tr>
+                                                    <td>@pc.LoaiPC</td>
+                                                    <td>@pc.SoTien.ToString("N0")</td>
+                                                    <td>@pc.NgayBatDau.ToString("dd/MM/yyyy")</td> <!-- Format the date if needed -->
+                                                    <td>@pc.NgayKetThuc.ToString("dd/MM/yyyy")</td> <!-- Format the date if needed -->
+                                                    <td>
+                                                        <button class="btn btn-success btn-sm" onclick="editPhuCap('@pc.MaPC'); return false;">
+                                                            <i class="fa-regular fa-pen-to-square"></i>
+                                                        </button> |
+                                                        <button class="btn btn-danger btn-sm" onclick="deletePhuCap(@pc.MaPC); return false;">
+                                                            <i class="fa-solid fa-trash"></i>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="6" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Modal TÀI KHOẢN -->
+<div class="modal fade" id="editAccountModal" tabindex="-1" aria-labelledby="editAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header " style="background-color: #000B58; color: #ffffff;">
+                <h5 class="modal-title" id="editAccountModalLabel">Chỉnh sửa thông tin tài khoản</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editAccountForm">
+                    <input type="hidden" id="TaiKhoanId" />
+                    <input type="hidden" id="MaNVTK" />
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Tên đăng nhập</label>
+                        <input type="text" class="form-control" id="username">
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mật khẩu</label>
+                        <input type="text" class="form-control" id="password">
+                    </div>
+                    <div class="mb-3">
+                        <label for="creationDate" class="form-label">Ngày tạo</label>
+                        <input class="form-control" id="creationDate" disabled>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Quyền</label>
+                        <select class="form-select" id="role" asp-items="@ViewBag.Quyens">
+                            <option value="">Chọn vai trò</option>
+                        </select>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="AddTaiKhoan">Lưu</button>
+                <button class="btn btn-success" id="UpdateTaiKhoan" style="display:none">Cập nhật</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* Modal HỢP ĐỒNG *@
+<!-- Modal HỢP ĐỒNG -->
+<div class="modal fade" id="HopDongModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #000B58; color: #ffffff;">
+                <h5 class="modal-title" id="HopDongLabel">Thêm Hợp Đồng</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-body">
+                    <input type="hidden" id="MaHD" />
+                    <div class="mb-3">
+                        <label for="MaNhanVien" class="form-label">Mã Nhân Viên</label>
+                        <input type="text" id="MaNhanVien" class="form-control" placeholder="Mã Nhân Viên" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="MaLoaiHD" class="form-label">Loại Hợp Đồng</label>
+                        <select id="MaLoaiHD" class="form-control" asp-items="@(ViewBag.LoaiHDs)">
+                            <option value="">-- Chọn Loại Hợp Đồng --</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="NgayVaoLam" class="form-label">Ngày Vào Làm</label>
+                        <input type="date" id="NgayVaoLam" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="NgayKetThuc" class="form-label">Ngày Kết Thúc</label>
+                        <input type="date" id="NgayKetThuc" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="GhiChu" class="form-label">Ghi Chú</label>
+                        <textarea id="GhiChu" class="form-control" rows="2"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="LuongCB" class="form-label">Lương Cơ Bản</label>
+                        <input type="number" id="LuongCB" class="form-control" placeholder="Lương Cơ Bản" step="0.01" />
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="Save" onclick="SaveHopDong();">Lưu</button>
+                <button class="btn btn-success" id="EditHopDong" style="display:none" onclick="UpdateHopDong();">Cập nhật</button>
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* MODAL PHỤ CẤP *@
+<div class="modal fade" id="PhuCapModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #000B58; color: #ffffff;">
+                <h5 class="modal-title" id="PhuCapLabel">Thêm Phụ Cấp</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Hidden input for MaPC -->
+                <input type="hidden" id="MaPC" />
+
+                <div class="mb-3">
+                    <label for="MaNVPC" class="form-label">Mã Nhân Viên</label>
+                    <input type="text" id="MaNVPC" class="form-control" placeholder="Mã Nhân Viên" readonly />
+                </div>
+
+                <div class="mb-3">
+                    <label for="LoaiPC" class="form-label">Loại Phụ Cấp</label>
+                    <select id="LoaiPC" class="form-control">
+                        <option value="">-- Chọn Loại Phụ Cấp --</option>
+                        <option value="Phụ cấp ăn trưa">Phụ cấp ăn trưa</option>
+                        <option value="Phụ cấp xăng xe">Phụ cấp xăng xe</option>
+                        <option value="Phụ cấp điện thoại">Phụ cấp điện thoại</option>
+                        <option value="Phụ cấp khác">Phụ cấp khác</option>
+
+
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="NgayBatDau" class="form-label">Ngày Bắt Đầu</label>
+                    <input type="date" id="NgayBatDau" class="form-control" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="NgayKT" class="form-label">Ngày Kết Thúc</label>
+                    <input type="date" id="NgayKT" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="SoTien" class="form-label">Số tiền</label>
+                    <input type="text" id="SoTien" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <label for="GhiChu" class="form-label">Ghi chú</label>
+                    <textarea id="GhiChu" class="form-control"></textarea>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="SavePC" onclick="SavePhuCap();">Lưu</button>
+                <button class="btn btn-success" id="Update" style="display:none" onclick="UpdatePhuCap();">Cập nhật</button>
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Thoát</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@* MODAL NHÂN VIÊN *@
+<div class="modal fade" id="NhanVienModal" tabindex="-1" aria-labelledby="NhanVienModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #000B58; color: #ffffff;">
+                <h5 class="modal-title" id="editEmployeeModalLabel">Cập nhật thông tin nhân viên</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Form để chỉnh sửa thông tin -->
+                <form id="NhanVienForm" enctype="multipart/form-data">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="mb-6">
+                                <!-- Image Preview Div -->
+                                <div id="imagePreview" class="border mb-3 d-flex justify-content-center align-items-center rounded-circle" style="width: 150px; height: 150px; overflow: hidden;">
+                                    <img id="previewImg" src="@Url.Content(Model.NhanVien.HinhAnh)" alt="Image Preview" style="max-width: 100%; max-height: 100%;" class="rounded-circle" />
+                                </div>
+                                <span id="imageName" hidden>@Model.NhanVien.HinhAnh</span> <!-- Hiển thị tên hình ảnh -->
+                                <input type="file" name="ImageUpload" accept="image/*" onchange="ShowImage(this, document.getElementById('previewImg'))" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="MaNV" class="form-label">Mã nhân viên</label>
+                                    <input id="MaNV" class="form-control" readonly />
+                                    
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="HoTen" class="form-label">Họ tên</label>
+                                    <input id="HoTen" class="form-control" />
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="GioiTinh" class="form-label">Giới tính</label>
+                                    <select id="GioiTinh" class="form-select" asp-items="@(ViewBag.GioiTinhs)">
+                                        <option value="">-- Chọn Giới Tính --</option>
+                                    </select>
+                                    
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="TrangThai" class="form-label">Trạng thái</label>
+                                    <select id="TrangThai" class="form-select" asp-items="@(ViewBag.TrangThais)">
+                                        <option value="">--Chọn trạng thái--</option>
+                                    </select>
+                                   
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="NgaySinh" class="form-label">Ngày sinh</label>
+                                    <input id="NgaySinh" type="date" class="form-control" />
+                                    
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="DanToc" class="form-label">Dân tộc</label>
+                                    <input id="DanToc" class="form-control" />
+                                   
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="TonGiao" class="form-label">Tôn giáo</label>
+                                    <input id="TonGiao" class="form-control" />
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="CCCD" class="form-label">CCCD</label>
+                                    <input id="CCCD" class="form-control" />
+                                   
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="SDT" class="form-label">SDT</label>
+                                    <input id="SDT" class="form-control" />
+                                    
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="Email" class="form-label">Email</label>
+                                    <input id="Email" class="form-control" />
+                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="NoiSinh" class="form-label">Nơi sinh</label>
+                                    <input id="NoiSinh" class="form-control" />
+                                   
+                                </div>
+                                <div class="col-md-8 mb-3">
+                                    <label for="DiaChi" class="form-label">Địa chỉ</label>
+                                    <input id="DiaChi" class="form-control" />
+                                   
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="TrinhDo" class="form-label">Trình độ</label>
+                                    <select id="TrinhDo" class="form-select" asp-items="@(ViewBag.TrinhDos)">
+                                        <option value="">--Chọn trình độ--</option>
+                                    </select>
+                                    
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="MaPB" class="form-label">Phòng Ban</label>
+                                    <select id="MaPB" class="form-select" asp-items="@(ViewBag.PhongBans)">
+                                        <option value="">-- Chọn Phòng Ban --</option>
+                                    </select>
+                                   
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="MaCV" class="form-label">Chức Vụ</label>
+                                    <select id="MaCV" class="form-select" asp-items="ViewBag.ChucVus">
+                                        <option value="">-- Chọn Chức Vụ --</option>
+                                    </select>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="SaveNhanVien()">Lưu</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+
+
+<script>
+
+    // Mở modal thêm tài khoản
+    $('#btnAddTaiKhoan').on('click', function () {
+        // Lấy ngày hiện tại
+        const today = new Date().toISOString().split('T')[0];
+
+        // Reset các giá trị trong modal
+        $('#TaiKhoanId').val('');
+        $('#MaNVTK').val('@Model.NhanVien.MaNV'); // Sử dụng mã nhân viên hiện tại
+        $('#username').val('');
+        $('#password').val('');
+        $('#creationDate').val(today); // Điền ngày hiện tại vào trường Ngày tạo
+        $('#role').val('');
+
+        // Hiển thị modal
+        var modal = new bootstrap.Modal($('#editAccountModal')[0]);
+        modal.show();
+        $('#editAccountModalLabel').text("Thêm tài khoản");
+
+
+        // Hiển thị nút "Lưu" và ẩn nút "Cập nhật"
+        $('#AddTaiKhoan').show();
+        $('#UpdateTaiKhoan').hide();
+    });
+
+
+    $('#AddTaiKhoan').on('click', function () {
+        var taiKhoan = {
+            MaNV: $('#MaNVTK').val(),
+            TenDN: $('#username').val(),
+            MatKhau: $('#password').val(),
+            MaQuyen: $('#role').val(),
+            NgayTao: $('#creationDate').val(),
+        };
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddTaiKhoan")',
+            data: taiKhoan,
+            success: function (response) {
+                if (response.success) {
+                    // Thông báo thành công với SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành công',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Đóng modal và reload trang
+                            $('#editAccountModal').modal('hide');
+                            location.reload();
+                        }
+                    });
+                } else {
+                    // Thông báo lỗi với SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất bại',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                // Thông báo lỗi hệ thống với SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra trong quá trình xử lý.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+
+
+    /// Hiển thị modal chỉnh sửa thông tin tài khoản
+    $('#btnEditTaiKhoan').on('click', function () {
+        var accountData = {
+            TaiKhoanId: '@(Model.TaiKhoan != null ? Model.TaiKhoan.MaTK : "")',
+            MaNVTK: '@(Model.TaiKhoan != null ? Model.TaiKhoan.MaNV : "")',
+            username: '@(Model.TaiKhoan != null ? Model.TaiKhoan.TenDN : "")',
+            creationDate: '@(Model.TaiKhoan != null && Model.TaiKhoan.NgayTao != null ? Model.TaiKhoan.NgayTao.ToString("dd/MM/yyyy") : "")',
+            role: '@(Model.TaiKhoan != null && Model.TaiKhoan.Quyen != null ? Model.TaiKhoan.Quyen.MaQuyen : "")',
+        };
+
+        // Điền dữ liệu vào modal
+        $('#TaiKhoanId').val(accountData.TaiKhoanId);
+        $('#MaNVTK').val(accountData.MaNVTK);
+        $('#username').val(accountData.username);
+        $('#password').val(''); // Không hiển thị mật khẩu
+        $('#creationDate').val(accountData.creationDate);
+        $('#role').val(accountData.role);
+
+        // Hiển thị modal
+        var modal = new bootstrap.Modal($('#editAccountModal')[0]);
+        modal.show();
+        $('#AddTaiKhoan').hide();
+        $('#UpdateTaiKhoan').show();
+    });
+
+    // Cập nhật thông tin tài khoản và sử dụng SweetAlert
+    $('#UpdateTaiKhoan').on('click', function () {
+        var accountData = {
+            MaTK: $('#TaiKhoanId').val(),
+            MaNV: $('#MaNVTK').val(),
+            TenDN: $('#username').val(),
+            MatKhau: $('#password').val(),
+            MaQuyen: $('#role').val(),
+            NgayTao: $('#creationDate').val(),
+        };
+
+        $.ajax({
+            url: '/Admin/NhanVien/EditTaiKhoan',
+            type: 'POST',
+            data: accountData,
+            success: function (response) {
+                if (response.success) {
+                    // Thông báo thành công với SweetAlert
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cập nhật thành công',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Đóng modal và reload trang sau khi nhấn OK
+                            $('#editAccountModal').modal('hide');
+                            location.reload();
+                        }
+                    });
+                } else {
+                    // Thông báo thất bại với SweetAlert
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Cập nhật thất bại',
+                        text: response.message,
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                // Thông báo lỗi hệ thống với SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi hệ thống',
+                    text: 'Có lỗi xảy ra khi lưu thông tin tài khoản.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+
+
+
+
+    //HỢP ĐỒNG
+    function OpenHopDong(maNV) {
+        
+        $('#MaNhanVien').val(maNV); // Gán giá trị cho MaNVHD
+        $('#HopDongModal').modal('show');
+        $('#HopDongLabel').text("Thêm hợp đồng");
+        $('#MaLoaiHD').val('');
+        $('#NgayVaoLam').val('');
+        $('#NgayKetThuc').val('');
+        $('#GhiChu').val('');
+        $('#LuongCB').val('');
+        $('#Save').show();
+        $('#EditHopDong').hide();
+    }
+
+
+
+    function SaveHopDong() {
+        var hopDong = {
+            MaNV: $('#MaNhanVien').val(),
+            MaLoaiHD: $('#MaLoaiHD').val(),
+            NgayVaoLam: $('#NgayVaoLam').val(),
+            NgayKetThuc: $('#NgayKetThuc').val(),
+            GhiChu: $('#GhiChu').val(),
+            TrangThai: '', // Trạng thái sẽ được thiết lập bên dưới
+            LuongCB: $('#LuongCB').val()
+        };
+
+        // Kiểm tra tính hợp lệ của ngày
+        var today = new Date();
+        var ngayVaoLam = new Date(hopDong.NgayVaoLam);
+        var ngayKetThuc = new Date(hopDong.NgayKetThuc);
+
+        // Kiểm tra nếu Ngày Kết Thúc nhỏ hơn Ngày Vào Làm
+        if (ngayKetThuc < ngayVaoLam) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Ngày Kết Thúc không hợp lệ',
+                text: 'Ngày Kết Thúc phải lớn hơn hoặc bằng Ngày Vào Làm.'
+            });
+            return; // Thoát nếu ngày không hợp lệ
+        }
+
+        // Thiết lập trạng thái dựa trên ngày
+        if (ngayVaoLam <= today && today <= ngayKetThuc) {
+            hopDong.TrangThai = "Còn hiệu lực"; // "Active"
+        } else {
+            hopDong.TrangThai = "Hết hạn"; // "Expired"
+        }
+
+        // Gọi Ajax để lưu hợp đồng
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddHopDong", "NhanVien", new { area = "Admin" })',
+            data: hopDong,
+            success: function (response) {
+                console.log("Response from server:", response); // Log server response
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành Công',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $('#HopDongModal').modal('hide');
+                        location.reload(); // Tải lại trang sau khi đóng modal
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất Bại',
+                        text: response.message
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra trong quá trình lưu hợp đồng.'
+                });
+            }
+        });
+    }
+
+
+
+    function EditHopDong(id) {
+        $.ajax({
+            url: '/Admin/NhanVien/GetHopDongById?id=' + id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+
+                // Chuyển đổi ngày mà không làm thay đổi giá trị
+                const formatDate = (dateString) => {
+                    const date = new Date(dateString);
+                    const year = date.getFullYear();
+                    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                    const day = date.getDate().toString().padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                };
+
+                // Hiển thị dữ liệu hợp đồng lên modal
+                $('#MaHD').val(data.maHD);
+                $('#MaNhanVien').val(data.maNV);
+                $('#MaLoaiHD').val(data.maLoaiHD);
+                $('#NgayVaoLam').val(formatDate(data.ngayVaoLam));
+                $('#NgayKetThuc').val(formatDate(data.ngayKetThuc));
+                $('#GhiChu').val(data.ghiChu);
+                $('#LuongCB').val(data.luongCB);
+
+                // Ẩn nút Save, hiển thị nút Cập nhật
+                $('#Save').hide();
+                $('#EditHopDong').show();
+
+                // Mở modal
+                $('#HopDongModal').modal('show');
+                $('#HopDongLabel').text("Cập nhật hợp đồng");
+            },
+            error: function () {
+                alert("Có lỗi xảy ra khi tải hợp đồng.");
+            }
+        });
+    }
+
+
+    function UpdateHopDong() {
+        var hopDong = {
+            MaHD: $('#MaHD').val(),
+            MaNV: $('#MaNhanVien').val(),
+            MaLoaiHD: $('#MaLoaiHD').val(),
+            NgayVaoLam: $('#NgayVaoLam').val(),
+            NgayKetThuc: $('#NgayKetThuc').val(),
+            GhiChu: $('#GhiChu').val(),
+            LuongCB: $('#LuongCB').val(),
+            TrangThai: ''
+        };
+
+        // Kiểm tra điều kiện ngày
+        var today = new Date();
+        var ngayVaoLam = new Date(hopDong.NgayVaoLam);
+        var ngayKetThuc = new Date(hopDong.NgayKetThuc);
+
+        // Nếu ngày kết thúc trước ngày vào làm
+        if (ngayKetThuc < ngayVaoLam) {
+            Swal.fire({
+                title: 'Lỗi!',
+                text: 'Ngày kết thúc không được trước ngày vào làm.',
+                icon: 'error',
+                confirmButtonText: 'OK'
+            });
+            return; // Dừng hàm nếu phát hiện lỗi
+        }
+
+        // Xác định trạng thái hợp đồng
+        if (ngayVaoLam <= today && today <= ngayKetThuc) {
+            hopDong.TrangThai = "Còn hiệu lực";
+        } else {
+            hopDong.TrangThai = "Hết hạn";
+        }
+
+        $.ajax({
+            url: '/Admin/NhanVien/EditHopDong',
+            data: hopDong,
+            type: 'POST',
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: response.message,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        $('#HopDongModal').modal('hide');
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: response.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: "Có lỗi xảy ra.",
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    }
+
+
+    function deleteHopDong(id) {
+        Swal.fire({
+            title: 'Bạn có chắc muốn xóa?',
+            text: "Bạn sẽ không thể khôi phục lại dữ liệu này!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Admin/NhanVien/DeleteHopDong?id=' + id,  
+                    type: 'POST',
+                    success: function (response) {
+                        Swal.fire(
+                            'Đã xóa!',
+                            'Hợp đồng đã được xóa.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Lỗi!',
+                            'Không thể xóa hợp đồng.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+    
+    //PHỤ CẤP
+    function OpenPhuCap(maNV) {
+        $('#MaNVPC').val(maNV);
+        $('#PhuCapModal').modal('show');
+        $('#PhuCapLabel').text("Thêm phụ cấp");
+
+        $('#MaLoaiPC').val('');
+        $('#NgayBatDau').val('');
+        $('#NgayKT').val(''); // Resetting value
+        $('#SoTien').val('');
+        $('#SavePC').show();
+        $('#Update').hide();
+    }
+
+
+    function SavePhuCap() {
+        var startDate = new Date($('#NgayBatDau').val());
+        var endDate = new Date($('#NgayKT').val());
+
+        // Log the start and end dates to the console
+        console.log("Ngày Bắt Đầu:", startDate);
+        console.log("Ngày Kết Thúc:", endDate);
+
+        if (endDate < startDate) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Lỗi',
+                text: 'Ngày Kết Thúc phải lớn hơn hoặc bằng Ngày Bắt Đầu.'
+            });
+            return;
+        }
+
+        var phuCap = {
+            MaNV: $('#MaNVPC').val(),
+            LoaiPC: $('#LoaiPC').val(),
+            NgayBatDau: $('#NgayBatDau').val(),
+            NgayKetThuc: $('#NgayKT').val(),
+            SoTien: $('#SoTien').val(),
+            GhiChu: $('#GhiChu').val()
+        };
+
+        // Log the phuCap object to verify its contents
+        console.log("Phụ Cấp Data:", phuCap);
+
+        $.ajax({
+            type: "POST",
+            url: '@Url.Action("AddPhuCap", "NhanVien", new { area = "Admin" })',
+            data: phuCap,
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Thành Công',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $('#PhuCapModal').modal('hide');
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất Bại',
+                        text: response.message
+                    });
+                }
+            },
+            error: function () {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra trong quá trình xử lý.'
+                });
+            }
+        });
+    }
+
+
+
+
+    function editPhuCap(maPC) {
+        $.ajax({
+            url: '/Admin/NhanVien/GetPhuCap/' + maPC, // Địa chỉ API để lấy dữ liệu phụ cấp theo mã
+            method: 'GET',
+            success: function (data) {
+                // Điền dữ liệu vào các input trong modal
+                $('#MaPC').val(data.maPC);
+                $('#MaNVPC').val(data.maNV);
+                $('#LoaiPC').val(data.loaiPC);
+                $('#NgayBatDau').val(new Date(data.ngayBatDau).toISOString().substring(0, 10));
+                $('#NgayKT').val(new Date(data.ngayKetThuc).toISOString().substring(0, 10));
+                $('#SoTien').val(data.soTien);
+
+
+                // Hiển thị nút Cập nhật và ẩn nút Lưu
+                $('#SavePC').hide();
+                $('#Update').show();
+
+                // Hiển thị modal
+                $('#PhuCapModal').modal('show');
+                $('#PhuCapLabel').text("Cập nhật phụ cấp");
+            },
+            error: function (error) {
+                console.log('Error fetching data:', error);
+                // Xử lý lỗi khi không thể lấy dữ liệu
+            }
+        });
+    }
+
+    function UpdatePhuCap() {
+        // Lấy dữ liệu từ các input trong modal
+        var maPC = $('#MaPC').val();
+        var maNVPC = $('#MaNVPC').val();
+        var loaiPC = $('#LoaiPC').val();
+        var ngayBatDau = $('#NgayBatDau').val();
+        var ngayKetThuc = $('#NgayKT').val();
+        var soTien = $('#SoTien').val();
+
+        // Kiểm tra giá trị của Loại Phụ Cấp
+        console.log("MaPC:", maPC);
+        console.log("MaNVPC:", maNVPC);
+        console.log("LoaiPC:", loaiPC); // Kiểm tra giá trị này
+        console.log("NgayBatDau:", ngayBatDau);
+        console.log("NgayKetThuc:", ngayKetThuc);
+        console.log("SoTien:", soTien);
+
+        // Gọi API hoặc hàm xử lý cập nhật phụ cấp
+        $.ajax({
+            url: '/Admin/NhanVien/UpdatePhuCap/',
+            method: 'POST',
+            data: {
+                MaPC: maPC,
+                MaNV: maNVPC,
+                LoaiPC: loaiPC,
+                NgayBatDau: ngayBatDau,
+                NgayKetThuc: ngayKetThuc,
+                SoTien: soTien // Chú ý: SoTien thay vì SoTienn
+            },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Cập Nhật Thành Công',
+                        text: response.message,
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        $('#PhuCapModal').modal('hide');
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Thất Bại',
+                        text: response.message
+                    });
+                }
+            },
+            error: function (error) {
+                console.log('Error updating PhuCap:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Có lỗi xảy ra trong quá trình cập nhật phụ cấp.'
+                });
+            }
+        });
+    }
+
+
+   
+    function deletePhuCap(id) {
+        Swal.fire({
+            title: 'Bạn có chắc muốn xóa?',
+            text: "Bạn sẽ không thể khôi phục lại dữ liệu này!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Có',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: '/Admin/NhanVien/DeletePhuCap?id=' + id,
+                    type: 'POST',
+                    success: function (response) {
+                        Swal.fire(
+                            'Đã xóa!',
+                            'Phụ cấp đã được xóa.',
+                            'success'
+                        ).then(() => {
+                            location.reload();
+                        });
+                    },
+                    error: function () {
+                        Swal.fire(
+                            'Lỗi!',
+                            'Không thể xóa phụ cấp.',
+                            'error'
+                        );
+                    }
+                });
+            }
+        });
+    }
+
+    
+    
+    
+    
+    //NHÂN VIÊN
+    function OpenNhanVien(maNV) {
+        $.ajax({
+            url: '/Admin/NhanVien/GetNhanVienByMaNV/' + maNV,
+            type: 'GET',
+            success: function (response) {
+                $('#MaNV').val(response.maNV);
+                $('#HoTen').val(response.hoTen);
+                $('#GioiTinh').val(response.gioiTinh);
+                $('#TrangThai').val(response.trangThai);
+                var ngaySinh = response.ngaySinh ? new Date(response.ngaySinh).toISOString().split('T')[0] : '';
+                $('#NgaySinh').val(ngaySinh);
+                $('#DanToc').val(response.danToc);
+                $('#TonGiao').val(response.tonGiao);
+                $('#CCCD').val(response.cccd);
+                $('#SDT').val(response.sdt);
+                $('#Email').val(response.email);
+                $('#NoiSinh').val(response.noiSinh);
+                $('#DiaChi').val(response.diaChi);
+                $('#TrinhDo').val(response.trinhDo);
+                $('#MaPB').val(response.maPB);
+                $('#MaCV').val(response.maCV);
+
+                // Update image preview (if available)
+                $('#previewImg').attr('src', response.hinhAnh ?  response.HinhAnh : '/img/account.png');
+
+                console.log("MaPB:", response.maPB);
+                console.log("MaCV:", response.maCV);
+                // Show the modal
+                $('#NhanVienModal').modal('show');
+            },
+            error: function () {
+                alert('Error loading employee data');
+            }
+        });
+    }
+    function SaveNhanVien() {
+        // Tạo đối tượng FormData
+        var formData = new FormData();
+
+        // Thêm các trường khác vào FormData
+        formData.append('MaNV', $('#MaNV').val());
+        formData.append('HoTen', $('#HoTen').val());
+        formData.append('GioiTinh', $('#GioiTinh').val());
+        formData.append('TrangThai', $('#TrangThai').val());
+        formData.append('NgaySinh', $('#NgaySinh').val());
+        formData.append('DanToc', $('#DanToc').val());
+        formData.append('TonGiao', $('#TonGiao').val());
+        formData.append('CCCD', $('#CCCD').val());
+        formData.append('SDT', $('#SDT').val());
+        formData.append('Email', $('#Email').val());
+        formData.append('NoiSinh', $('#NoiSinh').val());
+        formData.append('DiaChi', $('#DiaChi').val());
+        formData.append('TrinhDo', $('#TrinhDo').val());
+        formData.append('MaPB', $('#MaPB').val());
+        formData.append('MaCV', $('#MaCV').val());
+
+        // Thêm tệp hình ảnh vào FormData
+        const imageFile = document.querySelector("input[name='ImageUpload']").files[0];
+        if (imageFile) {
+            formData.append("ImageUpload", imageFile);
+        }
+
+        // Gửi dữ liệu cập nhật đến API
+        $.ajax({
+            url: '/Admin/NhanVien/EditNhanVien',
+            type: 'POST',
+            data: formData,
+            processData: false, // Không xử lý dữ liệu
+            contentType: false, // Không thiết lập Content-Type
+            success: function (response) {
+                // Đóng modal nếu lưu thành công
+                $('#NhanVienModal').modal('hide');
+                // Tải lại trang hoặc cập nhật danh sách nhân viên để phản ánh thay đổi
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error:", error);
+                alert('Lỗi khi lưu thông tin nhân viên');
+            }
+        });
+    }
+
+
+
+    function ShowImage(imgUploader, previewImage) {
+        if (imgUploader.files && imgUploader.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(previewImage).attr('src', e.target.result);
+            }
+            reader.readAsDataURL(imgUploader.files[0]);
+        }
+    }
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+

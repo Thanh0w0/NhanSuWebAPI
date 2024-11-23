@@ -1,0 +1,77 @@
+﻿@model List<NhanSuMVC.Models.ViewModels.TKLuongTheoPBVM>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="card p-4">
+    <label for="thang">Tháng:</label>
+    <select id="thang">
+        @for (int i = 1; i <= 12; i++)
+        {
+            <option value="@i" @(i == ViewBag.Thang ? "selected" : "")>@i</option>
+        }
+    </select>
+
+    <label for="nam">Năm:</label>
+    <select id="nam">
+        @for (int year = DateTime.Now.Year - 5; year <= DateTime.Now.Year; year++)
+        {
+            <option value="@year" @(year == ViewBag.Nam ? "selected" : "")>@year</option>
+        }
+    </select>
+
+    <button onclick="loadThongKeLuong()">Xem thống kê</button>
+    <canvas id="thongKeLuongChart" width="400" height="180"></canvas>
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function loadThongKeLuong() {
+        var thang = document.getElementById('thang').value;
+        var nam = document.getElementById('nam').value;
+
+        // Redirect to the Index action with selected month and year
+        window.location.href = '@Url.Action("Index", "ThongKe")?thang=' + thang + '&nam=' + nam;
+    }
+
+    // This function will draw the bar chart
+    function drawChart(labels, data) {
+        var ctx = document.getElementById('thongKeLuongChart').getContext('2d');
+
+        var thongKeLuongChart = new Chart(ctx, {
+            type: 'bar', // Specify bar chart
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Thống kê lương theo phòng ban',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    }
+
+    // Call this function to initialize the chart after loading data
+    function initializeChart() {
+        var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.TenPB))); // Replace with your property for labels
+        var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.TongLuongThucLanh))); // Replace with your property for data
+        drawChart(labels, data);
+    }
+
+    // Automatically initialize the chart when the page loads
+    window.onload = initializeChart;
+</script>

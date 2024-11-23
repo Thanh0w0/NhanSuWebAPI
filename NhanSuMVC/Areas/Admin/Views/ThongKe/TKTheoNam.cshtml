@@ -1,0 +1,95 @@
+﻿@model IEnumerable<NhanSuMVC.Models.ViewModels.TKLuongTheoNamVM>
+@{
+    ViewData["Title"] = "TKTheoNam";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Thống kê</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("TKTheoNam", "ThongKe", new { area = "Admin" })">Thống kê lương theo năm</a>
+        </li>
+
+    </ol>
+</nav>
+<div class="card p-4">
+    <div class="d-flex align-items-center mb-3">
+        <label for="nam" class="me-2 fw-bold">Năm:</label>
+        <select id="nam" class="form-select me-3" style="width: 150px;">
+            @for (int year = DateTime.Now.Year - 5; year <= DateTime.Now.Year; year++)
+            {
+                <option value="@year">@year</option>
+            }
+        </select>
+        <button class="btn btn-primary" onclick="loadTKTheoNam()">Xem thống kê</button>
+    </div>
+    <canvas id="thongKeLuongChart" width="400" height="180"></canvas>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    function loadTKTheoNam() {
+        var nam = document.getElementById('nam').value;
+
+        // Redirect to the TKTheoNam action with the selected year
+        window.location.href = '@Url.Action("TKTheoNam", "ThongKe")?nam=' + nam;
+    }
+
+    // This function will draw the line chart
+    function drawChart(labels, data) {
+        var ctx = document.getElementById('thongKeLuongChart').getContext('2d');
+
+        var thongKeLuongChart = new Chart(ctx, {
+            type: 'line', // Change to line chart
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Thống kê lương theo tháng',
+                    data: data,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: true // Fill the area under the line
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Tổng lương thực lãnh' // Y-axis title
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Tháng' // X-axis title
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: true // Show the legend
+                    }
+                }
+            }
+        });
+    }
+
+    // Initialize chart with model data
+    function initializeChart() {
+        var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.ThangNam)));
+        var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Select(x => x.TongLuongThucLanh)));
+        drawChart(labels, data);
+    }
+
+    // Automatically initialize the chart when the page loads
+    window.onload = initializeChart;
+</script>
+

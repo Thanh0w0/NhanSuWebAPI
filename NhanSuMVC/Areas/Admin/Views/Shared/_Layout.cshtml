@@ -1,0 +1,118 @@
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - NhanSuMVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/NhanSuMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+    <link href="~/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <div class='dashboard'>
+        <div class="dashboard-nav">
+            <header>
+                <a href="#" class="brand-logo d-flex align-items-center">
+                    <img src="@User.Claims.FirstOrDefault(c => c.Type == "AnhNhanVien")?.Value" alt="User Image" class="rounded-circle user-avatar" width="40" height="40" style="object-fit: cover;">
+                    <span class="ms-2 text-dark">@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value</span>
+                </a>
+            </header>
+
+
+            <nav class="dashboard-nav-list">
+                <a class="dashboard-nav-item" asp-area="Admin" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-home"></i>
+                    Trang chủ
+                </a>
+             
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fas fa-photo-video"></i> Danh mục
+                    </a>
+                    <div class='dashboard-nav-dropdown-menu'>
+                        <a asp-area="Admin" asp-controller="PhongBan" asp-action="Index" class="dashboard-nav-dropdown-item">Phòng ban</a>
+                        <a asp-area="Admin" asp-controller="ChucVu" asp-action="Index" class="dashboard-nav-dropdown-item">Chức vụ</a>
+                        <a asp-area="Admin" asp-controller="LoaiHD" asp-action="Index" class="dashboard-nav-dropdown-item">Loại hợp đồng</a>
+                        <a asp-area="Admin" asp-controller="Quyen" asp-action="Index" class="dashboard-nav-dropdown-item">Quyền</a>
+
+
+                    </div>
+                </div>
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fas fa-users"></i> Nhân sự
+                    </a>
+                    <div class='dashboard-nav-dropdown-menu'>
+                        <a asp-area="Admin" asp-controller="NhanVien" asp-action="Index" class="dashboard-nav-dropdown-item">Nhân viên</a>
+                        <a asp-area="Admin" asp-controller="ChinhSach" asp-action="Index" class="dashboard-nav-dropdown-item">Chính sách</a>
+                    </div>
+                </div>
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fa-regular fa-clock"></i> Chấm công
+                    </a>
+                    <div class='dashboard-nav-dropdown-menu'>
+                        <a asp-area="Admin" asp-controller="ChamCong" asp-action="Index" class="dashboard-nav-dropdown-item">Chấm công</a>
+                        <a asp-area="Admin" asp-controller="NghiPhep" asp-action="Index" class="dashboard-nav-dropdown-item">Nghỉ phép</a>
+                        
+                    </div>
+                </div>
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fas fa-money-check-alt"></i> Tính lương
+                    </a>
+                    <div class='dashboard-nav-dropdown-menu'>
+                        <a asp-area="Admin" asp-controller="TamUng" asp-action="Index" class="dashboard-nav-dropdown-item">Tạm ứng</a>
+                        <a asp-area="Admin" asp-controller="ChamCong" asp-action="TongCongThang" class="dashboard-nav-dropdown-item">Tổng hợp công</a>
+
+                        <a asp-area="Admin" asp-controller="BangLuong" asp-action="Index" class="dashboard-nav-dropdown-item">Tính lương</a>
+                          
+                    </div>
+                </div>
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fa-solid fa-chart-simple"></i> Thống kê
+                    </a>
+                    <div class='dashboard-nav-dropdown-menu'>
+                        <a asp-area="Admin" asp-controller="ThongKe" asp-action="TKTheoPB" class="dashboard-nav-dropdown-item">Theo phòng ban</a>
+
+                        <a asp-area="Admin" asp-controller="ThongKe" asp-action="TKTheoNam" class="dashboard-nav-dropdown-item">Theo năm</a>
+
+                    </div>
+                </div>
+                
+                @* <a href="#" class="dashboard-nav-item"><i class="fas fa-user"></i> Profile </a> *@
+                <div class="nav-item-divider"></div>
+                <a  asp-controller="DangNhap" asp-action="Logout" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Đăng xuất </a>
+            </nav>
+        </div>
+        <div class='dashboard-app'>
+            <header class='dashboard-toolbar'><a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a></header>
+            <div class='dashboard-content'>
+                <div class='container'>
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+    
+
+</body>
+</html>
+

@@ -1,0 +1,232 @@
+﻿@using Microsoft.AspNetCore.Http
+@model NhanSuMVC.Models.mvcNhanVien
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+   
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "NhanVien", new { area = "Admin" })">Danh sách nhân viên</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Create", "NhanVien", new { area = "Admin" })">Thêm nhân viên</a>
+        </li>
+    </ol>
+</nav>
+<div class="card p-4">
+    <h3 >Thêm nhân viên</h3>
+
+
+    <form asp-action="AddNhanVien" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-3">
+                <div class="mb-6">
+                    <!-- Image Preview Div -->
+                    <div id="imagePreview" class="border mb-3 d-flex justify-content-center align-items-center rounded-circle" style="width: 150px; height: 150px; overflow: hidden;">
+                        <img id="previewImg" src="/img/account.png" alt="Image Preview" style="max-width: 100%; max-height: 100%;" class="rounded-circle" />
+                    </div>
+
+                    <!-- File Input for Image Upload -->
+                    <input type="file" name="ImageUpload" accept="image/*" onchange="ShowImage(this, document.getElementById('previewImg'))" />
+
+                    <!-- Validation Span -->
+                    <span asp-validation-for="ImageUpload" class="text-danger"></span>
+                </div>
+
+            </div>
+
+
+            <div class="col-md-9">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="MaNV" class="form-label"></label>
+                        <input asp-for="MaNV" class="form-control" value='@Context.Session.GetString("MaNV")' readonly />
+                        <span asp-validation-for="MaNV" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="HoTen" class="form-label"></label>
+                        <input asp-for="HoTen" class="form-control" />
+                        <span asp-validation-for="HoTen" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="GioiTinh" class="form-label"></label>
+                        <select asp-for="GioiTinh" class="form-select" asp-items="ViewBag.GioiTinhs">
+                            <option value="">-- Chọn Giới Tính --</option>
+                        </select>
+                        <span asp-validation-for="GioiTinh" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label asp-for="TrangThai" class="form-label"></label>
+                        <select asp-for="TrangThai" class="form-select" asp-items="ViewBag.TrangThais">
+                            <option value="">-- Chọn Trạng Thái --</option>
+                        </select>
+                        <span asp-validation-for="TrangThai" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="NgaySinh" class="form-label"></label>
+                        <input asp-for="NgaySinh" type="date" class="form-control" />
+                        <span asp-validation-for="NgaySinh" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="DanToc" class="form-label"></label>
+                        <input asp-for="DanToc" class="form-control" />
+                        <span asp-validation-for="DanToc" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="TonGiao" class="form-label"></label>
+                        <input asp-for="TonGiao" class="form-control" />
+                        <span asp-validation-for="TonGiao" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="CCCD" class="form-label"></label>
+                        <input asp-for="CCCD" class="form-control" />
+                        <span asp-validation-for="CCCD" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="SDT" class="form-label"></label>
+                        <input asp-for="SDT" class="form-control" />
+                        <span asp-validation-for="SDT" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="Email" class="form-label"></label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="NoiSinh" class="form-label"></label>
+                        <input asp-for="NoiSinh" class="form-control" />
+                        <span asp-validation-for="NoiSinh" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-8 mb-3">
+                        <label asp-for="DiaChi" class="form-label"></label>
+                        <input asp-for="DiaChi" class="form-control" />
+                        <span asp-validation-for="DiaChi" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="TrinhDo" class="form-label"></label>
+                        <select asp-for="TrinhDo" class="form-select" asp-items="ViewBag.TrinhDos">
+                            <option value="">-- Chọn Trình Độ --</option>
+                        </select>
+                        <span asp-validation-for="TrinhDo" class="text-danger"></span>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="MaPB" class="form-label">Phòng Ban</label>
+                        <select asp-for="MaPB" class="form-select" asp-items="@(ViewBag.PhongBans)">
+                            <option value="">-- Chọn Phòng Ban --</option>
+                        </select>
+                        <span asp-validation-for="MaPB" class="text-danger"></span>
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+                        <label asp-for="MaCV" class="form-label">Chức Vụ</label>
+                        <select asp-for="MaCV" class="form-select" asp-items="ViewBag.ChucVus">
+                            <option value="">-- Chọn Chức Vụ --</option>
+                        </select>
+                        <span asp-validation-for="MaCV" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+        <div class="form-group d-flex justify-content-center mt-4">
+            <button type="submit" class="btn btn-primary">Lưu</button>
+        </div>
+    </form>
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // Hiển thị ảnh preview khi upload
+    function ShowImage(imgUploader, previewImage) {
+        if (imgUploader.files && imgUploader.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $(previewImage).attr('src', e.target.result);
+            }
+            reader.readAsDataURL(imgUploader.files[0]);
+        }
+    }
+
+    $(document).ready(function () {
+        // Gán giá trị mặc định cho các dropdown
+        $('#GioiTinh').val($('#selectedGioiTinh').val());
+        $('#TrangThai').val($('#selectedTrangThai').val());
+        $('#TrinhDo').val($('#selectedTrinhDo').val());
+        $('#MaPB').val($('#selectedPhongBan').val());
+        $('#MaCV').val($('#selectedChucVu').val());
+
+        // Sự kiện submit form
+        $("form").on("submit", function (event) {
+            event.preventDefault(); // Ngăn form gửi trực tiếp
+
+            var formData = new FormData(this); // Tạo FormData từ form
+            $.ajax({
+                url: '/Admin/NhanVien/AddNhanVien', // Action AddNhanVien
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    if (response.success) {
+                        // Hiển thị thông báo SweetAlert và chuyển hướng
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 2000 // Hiển thị thông báo trong 2 giây
+                        }).then(() => {
+                            // Chuyển hướng về trang Index
+                            window.location.href = "/Admin/NhanVien/Index";
+                        });
+                    } else {
+                        // Hiển thị thông báo lỗi bằng SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: response.message
+                        });
+                    }
+                },
+                error: function (error) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Đã xảy ra lỗi khi thêm nhân viên!'
+                    });
+                }
+            });
+        });
+    });
+</script>

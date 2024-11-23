@@ -1,0 +1,133 @@
+﻿@model IEnumerable<NhanSuMVC.Models.mvcChamCong>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "Chấm công", new { area = "Admin" })">Chấm công</a>
+        </li>
+        
+    </ol>
+</nav>
+
+
+
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="card-title">Bộ lọc chấm công</h5>
+        <a class="btn btn-success text-decoration-none" asp-area="Admin" asp-controller="NgayLe" asp-action="Index">Cài đặt nghỉ lễ</a>
+    </div>
+    <!-- Form controls -->
+    <form method="get" action="/Admin/ChamCong/Index" id="filterForm">
+        <div class="row mb-3">
+
+            <div class="col-md-4 me-3">
+                <label for="fromDate" class="form-label">Từ ngày</label>
+                <input type="date" class="form-control" id="fromDate" name="fromDate" value="@ViewBag.FromDate?.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="col-md-4 me-3">
+                <label for="toDate" class="form-label">Đến ngày</label>
+                <input type="date" class="form-control" id="toDate" name="toDate" value="@ViewBag.ToDate?.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary">Lọc</button>
+            </div>
+    
+
+        
+
+        </div>
+
+
+        <div class="d-flex justify-content-between align-items-center mt-4">
+            <h5 class="card-title">Danh sách chấm công</h5>
+           
+        </div>
+    </form>
+
+
+
+    <!-- Bảng Danh sách chấm công -->
+    <table class="table table-bordered mt-3">
+        <thead>
+            <tr>
+                <th scope="col">Ngày chấm công</th>
+                <th scope="col">Mã nhân viên</th>
+                <th scope="col">Tên</th>
+                <th scope="col">Phòng ban</th>
+                <th scope="col">Giờ vào</th>
+                <th scope="col">Giờ ra</th>
+                <th scope="col">Trạng thái</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.NgayChamCong.ToString("dd-MM-yyyy")</td>
+                        <td>@item.MaNV</td>
+                        <td>@item.NhanVien.HoTen</td>
+                        <td>@item.NhanVien.PhongBan.TenPB</td>
+
+                        <td>@item.ThoiGianVao</td>
+                        <td>@item.ThoiGianRa</td>
+                        <td>@item.TrangThaiCC</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center">Không có dữ liệu</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="d-flex justify-content-end">
+        <div class="pagination">
+            @if (ViewBag.TotalRecords > 0)
+            {
+                int totalPages = (int)Math.Ceiling((double)ViewBag.TotalRecords / ViewBag.RecordCount);
+                for (int i = 1; i <= totalPages; i++)
+                {
+                    <a href="@Url.Action("Index", new { fromDate = ViewBag.FromDate, toDate = ViewBag.ToDate, pageIndex = i, recordCount = ViewBag.RecordCount })" class="btn @(ViewBag.PageIndex == i ? "btn-primary" : "btn-secondary") mx-1">
+                        @i
+                    </a>
+                }
+            }
+        </div>
+    </div>
+
+ </div>
+
+
+
+<script>
+    function submitForm() {
+        document.getElementById("filterForm").submit();
+    }
+
+    function setCurrentDate() {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng từ 0 nên cần +1
+        const dd = String(today.getDate()).padStart(2, '0');
+
+        return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // Đặt ngày hiện tại cho cả input "fromDate" và "toDate"
+    document.getElementById('fromDate').value = setCurrentDate();
+    document.getElementById('toDate').value = setCurrentDate();
+</script>

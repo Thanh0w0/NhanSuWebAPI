@@ -1,0 +1,91 @@
+﻿@model List<NhanSuMVC.Models.mvcChamCong>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_NhanVienLayout.cshtml";
+    var selectedMonth = ViewBag.Thang ?? DateTime.Now.Month; // Tháng mặc định là tháng hiện tại
+    var selectedYear = ViewBag.Nam ?? DateTime.Now.Year;
+}
+
+
+
+<div class="container my-3">
+    <div class="row align-items-center">
+        <div class="col">
+            <div class="card p-4 mb-3">
+                <h3>Lịch sử chấm công</h3>
+                <form method="get" action="@Url.Action("Index", "NVChamCong")" class="d-flex justify-content-between align-items-center mb-3 mt-4">
+                    <div class="form-group mr-3">
+                        <label for="monthDropdown" class="mr-2 font-weight-bold">Chọn Tháng:</label>
+                        @Html.DropDownList("month", new SelectList(Enumerable.Range(1, 12).Select(m => new { Value = m, Text = m }), "Value", "Text", selectedMonth), new { @class = "form-select d-inline-block", @id = "monthDropdown", style = "width: auto;" })
+
+                        <label for="yearDropdown" class="mr-2 font-weight-bold">Chọn Năm:</label>
+                        @Html.DropDownList("year", new SelectList(Enumerable.Range(DateTime.Now.Year - 5, 6).Select(y => new { Value = y, Text = y }), "Value", "Text", selectedYear), new { @class = "form-select d-inline-block", @id = "yearDropdown", style = "width: auto;" })
+
+                        <button type="submit" class="btn btn-primary" onclick="getTongHopCong()">Lấy Dữ Liệu</button>
+                    </div>
+                     
+
+                    <div class="d-flex align-items-center">
+
+                        <!-- Dropdown số bản ghi hiển thị -->
+                       @*  <select class="form-select w-auto me-2" id="recordCount">
+                            <option value="">Hiển thị</option>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                        </select> *@
+@* 
+                        <button id="btnExportExcel" class="btn btn-success ml-2">Xuất Excel</button> *@
+                    </div>
+
+
+                </form>
+
+
+
+
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">Ngày chấm công</th>
+                            <th scope="col">Mã nhân viên</th>
+                            <th scope="col">Tên</th>
+                            <th scope="col">Phòng ban</th>
+                            <th scope="col">Giờ vào</th>
+                            <th scope="col">Giờ ra</th>
+                            <th scope="col">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.NgayChamCong.ToString("dd-MM-yyyy")</td>
+                                    <td>@item.MaNV</td>
+                                    <td>@item.NhanVien?.HoTen</td>
+                                    <td>@item.NhanVien?.PhongBan?.TenPB</td>
+                                    <td>@item.ThoiGianVao</td>
+                                    <td>@item.ThoiGianRa</td>
+                                    <td>@item.TrangThaiCC</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center">Không có dữ liệu</td>
+                            </tr>
+                        }
+
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

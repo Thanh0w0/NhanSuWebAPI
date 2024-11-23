@@ -1,0 +1,173 @@
+﻿@model NhanSuMVC.Models.mvcNghiPhep
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "NghiPhep", new { area = "Admin" })">Quản lý nghỉ phép</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Edit", "NghiPhep", new { area = "Admin" })">Duyệt nghỉ phép</a>
+        </li>
+
+    </ol>
+</nav>
+
+<div class="card p-4">
+    <h5 class="card-title">Thông tin nghỉ phép</h5>
+
+
+    <form method="post">
+        <div class="row mb-3">
+            <input type="hidden" id="MaNP" value="@Model.MaNP">
+
+            <!-- Mã nhân viên -->
+            <div class="col-md-6 mb-3">
+                <label for="MaNV" class="form-label">Mã nhân viên</label>
+                <div class="d-flex align-items-center">
+                    <input type="text" class="form-control" id="MaNV" asp-for="MaNV" readonly>
+                </div>
+            </div>
+
+
+        </div>
+
+        <div class="row mb-3">
+            <!-- Từ ngày -->
+            <div class="col-md-6 mb-3">
+                <label for="startDate" class="form-label" asp-for="TuNgay">Từ ngày</label>
+                <input type="date" class="form-control" id="startDate" asp-for="TuNgay" readonly>
+            </div>
+
+            <!-- Đến ngày -->
+            <div class="col-md-6 mb-3">
+                <label for="endDate" class="form-label" asp-for="DenNgay">Đến ngày</label>
+                <input type="date" class="form-control" id="endDate" asp-for="DenNgay" readonly>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <!-- Loại nghỉ phép -->
+            <div class="col-md-6 mb-3">
+                <label for="LoaiNP" class="form-label" asp-for="LoaiNP">Loại nghỉ phép</label>
+                <input type="text" class="form-control" id="LoaiNP" asp-for="LoaiNP" readonly>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <label for="trangThai" class="form-label" asp-for="TrangThai">Trạng thái</label>
+                <select id="trangThai" class="form-select" asp-for="TrangThai">
+                    <option value="">-- Chọn Loại Trạng Thái --</option>
+                    <option value="Chờ duyệt">Chờ duyệt</option>
+                    <option value="Đã duyệt">Đã duyệt</option>
+
+                </select>
+            </div>
+
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6 mb-3">
+                <label for="lyDo" class="form-label" asp-for="LyDo">Lý do</label>
+                <textarea class="form-control" id="lyDo" rows="2" asp-for="LyDo" readonly></textarea>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="SoNgayNghiCoLuong" class="form-label" asp-for="SoNgayNghiCoLuong">Số ngày nghỉ có lương</label>
+                <input type="text" class="form-control" id="SoNgayNghiCoLuong" asp-for="SoNgayNghiCoLuong" readonly>
+
+            </div>
+
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary" id="btnSave">Lưu</button>
+        </div>
+
+    </form>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script>
+    $(document).ready(function () {
+        $("#btnSave").click(function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Retrieve the value of the hidden input (MaNP)
+            const id = $("#MaNP").val(); // Get the leave request ID
+
+            const trangThai = $("#trangThai").val(); 
+            const LoaiNghiPhep = $("#LoaiNP").val();
+            const MaNhanVien = $("#MaNV").val();
+
+
+
+            // Debugging log to ensure ID is captured
+            console.log("Mã nghỉ phép: " + id);
+
+            // Check if a status is selected
+            if (!trangThai) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chú ý',
+                    text: 'Vui lòng chọn trạng thái!',
+                });
+                return;
+            }
+
+            // Make the API call to update the leave request status
+            $.ajax({
+                url: "/Admin/NghiPhep/UpdateNP", // API endpoint
+                type: "POST",
+                data: {
+                    id: id,
+                    trangThai: trangThai,
+                    loaiNP: LoaiNghiPhep,
+                    maNV : MaNhanVien
+                },
+                success: function (response) {
+                    if (response.success) {
+                        // Show success message and redirect to index page
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Thành công',
+                            text: response.message,
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = "/Admin/NghiPhep/Index";
+                        });
+                    } else {
+                        // Show error message
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: response.message,
+                        });
+                    }
+                },
+                error: function () {
+                    // Show error if server connection fails
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Lỗi',
+                        text: 'Có lỗi xảy ra khi kết nối tới server.',
+                    });
+                }
+            });
+        });
+    });
+
+</script>
+
+

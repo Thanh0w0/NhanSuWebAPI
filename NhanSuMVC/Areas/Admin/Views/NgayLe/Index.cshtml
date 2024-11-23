@@ -1,0 +1,160 @@
+﻿@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+
+        <li class="breadcrumb-item">
+            <a>Nhân sự</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "ChamCong", new { area = "Admin" })">Chấm công</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="@Url.Action("Index", "NgayLe", new { area = "Admin" })">Cài đặt ngày lễ</a>
+        </li>
+    </ol>
+</nav>
+
+
+<div class="card p-4">
+    <div class="container my-5">
+        <h2 class="text-center mb-4">Lịch</h2>
+        <div id="calendar"></div>
+    </div>
+</div>
+
+
+<!-- Modal để nhập tên ngày lễ -->
+<div class="modal fade" id="holidayModal" tabindex="-1" aria-labelledby="holidayModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="holidayModalLabel">Thêm Ngày Lễ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="holidayForm">
+                    <input type="hidden" id="NghiLeId" />
+                    <div class="mb-3">
+                        <label for="holidayStart" class="form-label">Ngày bắt đầu:</label>
+                        <input type="text" id="holidayStart" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="holidayEnd" class="form-label">Ngày kết thúc:</label>
+                        <input type="text" id="holidayEnd" class="form-control" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="holidayName" class="form-label">Tên ngày lễ:</label>
+                        <input type="text" id="holidayName" class="form-control" placeholder="Nhập tên ngày lễ">
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FullCalendar JS -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.5/index.global.min.js"></script>
+
+<!-- jQuery for AJAX -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const calendarEl = document.getElementById('calendar');
+        const holidayModal = new bootstrap.Modal(document.getElementById('holidayModal'));
+        const holidayForm = document.getElementById('holidayForm');
+        const holidayStartInput = document.getElementById('holidayStart');
+        const holidayEndInput = document.getElementById('holidayEnd');
+        const holidayNameInput = document.getElementById('holidayName');
+
+        let selectedStartDate = null;
+        let selectedEndDate = null;
+
+        // Pass holidays from ViewBag to JavaScript
+        const holidays = @Html.Raw(Json.Serialize(ViewBag.Holidays));
+
+        // Initialize FullCalendar
+        // Initialize FullCalendar
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            selectable: true,
+            eventColor: 'green',
+            select: function (info) {
+                selectedStartDate = info.startStr;
+                selectedEndDate = info.endStr;
+
+                // If only one day is selected
+                if (new Date(selectedStartDate).getTime() === new Date(selectedEndDate).getTime()) {
+                    selectedEndDate = selectedStartDate; // Set end date to the same as start date
+                }
+
+                holidayStartInput.value = selectedStartDate;
+                holidayEndInput.value = selectedEndDate;
+                holidayNameInput.value = '';
+                holidayModal.show();
+            },
+            events: holidays.map(holiday => ({
+                title: holiday.title,
+                start: holiday.start,
+                end: holiday.end,
+                color: 'green'
+            }))
+        });
+
+        // Render the calendar
+        calendar.render();
+        // Handle form submission for adding a new holiday
+        holidayForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const holidayName = holidayNameInput.value.trim();
+            const startDate = selectedStartDate;
+            const endDate = selectedEndDate || startDate;
+
+            if (holidayName && startDate) {
+                const formData = new FormData();
+                formData.append("NgayBD", startDate);
+                formData.append("NgayKT", endDate);
+                formData.append("TenNgayLe", holidayName);
+
+                $.ajax({
+                    url: '/Admin/NgayLe/Add',
+                    method: 'POST',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (response) {
+                        if (response.success) {
+                            // Add the new holiday event to the calendar
+                            calendar.addEvent({
+                                title: holidayName,
+                                start: startDate,
+                                end: endDate,
+                                color: 'green'
+                            });
+                            holidayModal.hide();
+                            holidayForm.reset();
+                        } else {
+                            alert(response.message);
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error saving holiday:', error);
+                    }
+                });
+            } else {
+                alert("Please fill in all required fields.");
+            }
+        });
+    });
+</script>

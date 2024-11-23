@@ -1,0 +1,246 @@
+﻿@using NhanSuMVC.Areas.NhanVien.Controllers;
+@model List<NhanSuMVC.Models.mvcNghiPhep>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "Lịch Sử Nghỉ Phép";
+    Layout = "~/Views/Shared/_NhanVienLayout.cshtml";
+    var selectedMonth = ViewBag.Thang ?? DateTime.Now.Month; // Tháng mặc định là tháng hiện tại
+    var selectedYear = ViewBag.Nam ?? DateTime.Now.Year;
+}
+
+@{
+    // Nếu bạn cần lấy thông tin từ ViewBag
+    var leaveStatistics = ViewBag.LeaveStatistics as TKNghiPhepDto;
+}
+
+<div class="container my-3">
+    <div class="row align-items-center">
+        <div class="col">
+            <!-- Card Thống kê số ngày nghỉ -->
+            <div class="card p-4 mb-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">Thống kê số ngày nghỉ</h4>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerLeaveModal">Đăng ký nghỉ phép</button>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Tổng số ngày nghỉ (có lương) theo quy định:</strong> 12 ngày</p>
+                        <p><strong>Tổng số ngày (có lương) đã nghỉ:</strong> @(leaveStatistics?.TongSoNgayNghiCoLuongDaNghi ?? 0) ngày</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Tổng số ngày (không lương) đã nghỉ:</strong> @(leaveStatistics?.TongSoNgayNghiKhongLuongDaNghi ?? 0) ngày</p>
+                        <p><strong>Số ngày nghỉ (có lương) còn lại:</strong> @(leaveStatistics?.SoNgayNghiCoLuongConLai ?? 12) ngày</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row align-items-center">
+        <div class="col">
+            <!-- Card Lịch sử nghỉ phép -->
+            <div class="card p-4">
+                <h2>Lịch sử nghỉ phép</h2>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="form-group mr-3">
+                       
+                        <label for="yearDropdown" class="mr-2 font-weight-bold">Chọn Năm:</label>
+                        @Html.DropDownList("year", new SelectList(Enumerable.Range(DateTime.Now.Year - 5, 6).Select(y => new { Value = y, Text = y }), "Value", "Text", selectedYear), new { @class = "form-select d-inline-block", @id = "yearDropdown", style = "width: auto;" })
+
+                        <button type="submit" class="btn btn-primary" id="btnSearchLeave">Tìm</button>
+                    </div>
+                   
+                </div>
+                <table class="table table-bordered mt-3">
+                    <thead>
+                        <tr>
+                            <th scope="col">Mã nhân viên</th>
+                            <th scope="col">Loại nghỉ phép</th>
+                            <th scope="col">Ngày bắt đầu</th>
+                            <th scope="col">Ngày kết thúc</th>
+                            <th scope="col">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.MaNV</td>
+                                    <td>@item.LoaiNP</td>
+                                    <td>@item.TuNgay.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.DenNgay.ToString("yyyy-MM-dd")</td>
+                                    <td>@item.TrangThai</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center">Không có dữ liệu nghỉ phép.</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+               
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="registerLeaveModal" tabindex="-1" aria-labelledby="registerLeaveModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="registerLeaveModalLabel">Đăng ký nghỉ phép</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" asp-controller="NghiPhepNV" method="post">
+                    <input type="hidden" id="MaNP" />
+                    <div class="mb-3">
+                        <label for="maNV" class="form-label">Mã nhân viên</label>
+                        <input id="maNV" name="MaNV" class="form-control" value="@ViewBag.MaNhanVien" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label for="loaiNP" class="form-label">Loại nghỉ phép</label>
+                        <select id="loaiNP" name="LoaiNP" class="form-select" required>
+                            <option value="">Chọn loại nghỉ phép</option>
+                            @if (leaveStatistics?.SoNgayNghiCoLuongConLai > 0)
+                            {
+                                <option value="Có lương">Có lương</option>
+                            }
+                            <option value="Không lương">Không lương</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="tuNgay" class="form-label">Ngày bắt đầu</label>
+                        <input id="tuNgay" name="TuNgay" type="date" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="denNgay" class="form-label">Ngày kết thúc</label>
+                        <input id="denNgay" name="DenNgay" type="date" class="form-control" required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="lyDo" class="form-label">Lý do</label>
+                        <textarea id="lyDo" name="LyDo" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="trangThai" class="form-label">Trạng thái</label>
+                        <input id="trangThai" name="TrangThai" class="form-control" readonly value="Chờ duyệt" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="submit" class="btn btn-primary" id="addNghiPhep">Xác nhận</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<!-- Thêm đoạn mã này vào file của bạn trước khi sử dụng jQuery -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+        // Nút thêm nghỉ phép
+        $('#addNghiPhep').click(function (event) {
+            event.preventDefault();
+
+            // Lấy ngày bắt đầu và ngày kết thúc
+            var startDate = new Date($('#tuNgay').val());
+            var endDate = new Date($('#denNgay').val());
+
+            // Kiểm tra nếu ngày kết thúc nhỏ hơn ngày bắt đầu
+            if (endDate < startDate) {
+                alert("Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu.");
+                return;
+            }
+
+            // Tính số ngày nghỉ
+            var timeDiff = endDate - startDate;
+            var daysOff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // Số ngày nghỉ đã tính thêm 1 để bao gồm ngày đầu tiên
+
+            // Lấy thông tin từ backend
+            var totalDaysTaken = @(leaveStatistics?.TongSoNgayNghiCoLuongDaNghi ?? 0);
+            var remainingPaidDays = @(leaveStatistics?.SoNgayNghiCoLuongConLai ?? 12);
+
+            // Giá trị mặc định
+            var leaveType = $('#loaiNP').val(); // Loại nghỉ phép (Có lương hoặc Không lương)
+            var paidLeave = 0;
+            var unpaidLeave = 0;
+
+            // Kiểm tra nếu loại nghỉ phép là "Có lương"
+            if (leaveType === "Có lương") {
+                // Nếu số ngày nghỉ yêu cầu nhiều hơn số ngày nghỉ có lương còn lại
+                if (daysOff > remainingPaidDays) {
+                    toastr.error("Số ngày nghỉ có lương không đủ. Bạn chỉ còn " + remainingPaidDays + " ngày nghỉ có lương.");
+                    return; // Ngừng thực hiện và không gửi yêu cầu đăng ký
+                } else {
+                    paidLeave = daysOff; // Đủ số ngày nghỉ có lương
+                    unpaidLeave = 0;
+                }
+            }
+
+            // Nếu loại nghỉ phép là không lương
+            else if (leaveType === "Không lương") {
+                paidLeave = 0;
+                unpaidLeave = daysOff;
+            }
+
+            // Tạo yêu cầu nghỉ phép
+            var leaveRequest = {
+                MaNV: $('#maNV').val(),
+                LoaiNP: leaveType,
+                TuNgay: $('#tuNgay').val(),
+                DenNgay: $('#denNgay').val(),
+                LyDo: $('#lyDo').val(),
+                TrangThai: $('#trangThai').val(),
+                SoNgayNghiCoLuong: remainingPaidDays > 0 ? remainingPaidDays - paidLeave : 0 // Không trừ thêm nếu đã hết ngày nghỉ có lương
+            };
+
+            console.log(leaveRequest);
+
+            // Gửi yêu cầu AJAX
+            $.ajax({
+                url: '@Url.Action("Create", "NghiPhepNV")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(leaveRequest),
+                success: function (response) {
+                    if (response.success) {
+                        toastr.success(response.message);
+                        setTimeout(function () {
+                            location.reload(); // Tải lại trang sau khi thêm thành công
+                        }, 2000);
+                    } else {
+                        toastr.error('Đăng ký nghỉ phép thất bại: ' + response.message);
+                    }
+                },
+                error: function () {
+                    toastr.error('Đã xảy ra lỗi trong quá trình gửi yêu cầu.');
+                }
+            });
+        });
+
+        // Nút tìm kiếm lịch sử nghỉ phép
+        $('#btnSearchLeave').click(function () {
+            var year = $('#yearDropdown').val();
+            window.location.href = '@Url.Action("Index", "NghiPhepNV")?year=' + year;
+        });
+    });
+
+</script>

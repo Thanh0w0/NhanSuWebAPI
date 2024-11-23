@@ -1,0 +1,122 @@
+﻿@model List<NhanSuMVC.Models.ViewModels.LuongVM>
+@{
+    bool hasData = Model != null && Model.Count > 0;
+}
+<table class="table table-bordered table-hover">
+    <thead class="thead-light">
+        <tr>
+            <th rowspan="2" style="width: 5%;">Tháng</th>
+            <th rowspan="2" style="width: 12%;">Lương cơ bản</th>
+            <th rowspan="2" style="width: 8%;">Ngày công thực tế</th>
+            <th colspan="5" style="width: 32%;">Các khoản phụ cấp</th>
+            <th colspan="4" style="width: 32%;">Tiền tăng ca</th>
+            <th rowspan="2" style="width: 6%;">Tổng thưởng</th>
+            <th rowspan="2" style="width: 6%;">Tổng phạt</th>
+            <th colspan="4" style="width: 32%;">Khấu trừ bảo hiểm NLĐ</th>
+            <th colspan="4" style="width: 32%;">Công ty đóng bảo hiểm</th>
+            <th rowspan="2" style="width: 6%;">Giảm trừ bản thân</th>
+            <th rowspan="2" style="width: 6%;">Thuế TNCN</th>
+            <th rowspan="2" style="width: 6%;">Tạm ứng</th>
+            <th rowspan="2" style="width: 6%;">Tổng thu nhập</th>
+
+            <th rowspan="2" class="sticky-column" style="width: 12%;">Lương thực lãnh</th>
+        </tr>
+        <tr>
+            <th>Phụ cấp ăn trưa</th>
+            <th>Phụ cấp xăng xe</th>
+            <th>Phụ cấp điện thoại</th>
+            <th>Phụ cấp khác</th>
+            <th>Tổng phụ cấp</th>
+            <th>Tăng ca ngày thường</th>
+            <th>Tăng ca ngày lễ</th>
+            <th>Tăng ca T7, CN</th>
+            <th>Tổng tiền tăng ca</th>
+            <th>BHXH</th>
+            <th>BHYT</th>
+            <th>BHTN</th>
+            <th>Tổng khấu trừ</th>
+            <th>BHXH</th>
+            <th>BHYT</th>
+            <th>BHTN</th>
+            <th>Tổng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (hasData)
+        {
+            int index = 1;
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Thang/@item.Nam</td>
+                    <td>@item.LuongCB.ToString("N0")</td>
+                    <td>@item.NgayCongThucTe</td>
+                    <td>@item.PhuCapAnTrua.ToString("N0")</td>
+                    <td>@item.PhuCapXangXe.ToString("N0")</td>
+                    <td>@item.PhuCapDienThoai.ToString("N0")</td>
+                    <td>@item.PhuCapKhac.ToString("N0")</td>
+                    <td>@item.TongPhuCap.ToString("N0")</td>
+                    <td>@item.TongTCThuong.ToString("N0")</td>
+                    <td>@item.TongTCLe.ToString("N0")</td>
+                    <td>@item.TongTCNghi.ToString("N0")</td>
+                    <td>@item.TongTienTC.ToString("N0")</td>
+                    <td>@item.TongThuong.ToString("N0")</td>
+                    <td>@item.TongPhat.ToString("N0")</td>
+                    <td>@item.BHXH_NLD.ToString("N0")</td>
+                    <td>@item.BHYT_NLD.ToString("N0")</td>
+                    <td>@item.BHTN_NLD.ToString("N0")</td>
+                    <td>@((item.BHXH_NLD + item.BHYT_NLD + item.BHTN_NLD).ToString("N0"))</td>
+                    <td>@item.BHXH_DN.ToString("N0")</td>
+                    <td>@item.BHYT_DN.ToString("N0")</td>
+                    <td>@item.BHTN_DN.ToString("N0")</td>
+                    <td>@((item.BHXH_DN + item.BHYT_DN + item.BHTN_DN).ToString("N0"))</td>
+
+                    <td>@(11000000.ToString("N0"))</td>
+                    <td>@item.ThueTNCN.ToString("N0")</td>
+                    <td>@item.TongTU.ToString("N0")</td>
+                    <td>@item.TongThuNhap.ToString("N0")</td>
+                    <td>@item.LuongThucLanh.ToString("N0")</td>
+                </tr>
+                index++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="28">Không có dữ liệu để hiển thị</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<style>
+
+    .card {
+        width: 1220px; /* Đảm bảo card chiếm toàn bộ chiều rộng của phần chứa */
+        max-width: 1500px; /* Cố định chiều rộng tối đa cho card */
+        overflow-y: auto; /* Cho phép cuộn dọc nếu nội dung vượt quá chiều cao */
+        margin: 0 auto; /* Căn giữa thẻ card trong phần chứa */
+        box-sizing: border-box; /* Đảm bảo padding và border không làm thay đổi chiều rộng */
+    }
+
+
+
+    #salaryTable {
+        width: 100%; /* Đảm bảo bảng chiếm hết chiều rộng của phần chứa */
+        max-width: 100%; /* Đảm bảo bảng không vượt quá chiều rộng của card */
+        overflow-x: auto; /* Cuộn ngang nếu bảng quá rộng */
+        white-space: nowrap; /* Giữ nội dung trong các ô không bị xuống dòng */
+        display: block; /* Cho phép cuộn ngang trong phần bảng */
+    }
+
+    table {
+        width: 100%; /* Đảm bảo bảng chiếm hết chiều rộng */
+        border-collapse: collapse; /* Cố định biên giữa các ô */
+    }
+
+    th, td {
+        padding: 10px;
+        text-align: center;
+        border: 1px solid #ddd;
+        white-space: nowrap; /* Giữ nội dung trong ô không bị xuống dòng */
+    }
+</style>

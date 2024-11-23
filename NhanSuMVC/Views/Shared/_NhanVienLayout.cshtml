@@ -1,0 +1,86 @@
+﻿@using System.Security.Claims
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - NhanSuMVC</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/NhanSuMVC.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="~/css/nhanvienstyles.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div class='dashboard'>
+        <div class="dashboard-nav">
+            <header>
+                <a href="#" class="brand-logo d-flex flex-column align-items-center">
+                    <!-- Hình ảnh nhân viên -->
+                    <img src="@Url.Content(User.Claims.FirstOrDefault(c => c.Type == "AnhNhanVien")?.Value)"
+                         class="rounded-circle" width="100" height="100" style="object-fit: cover;">
+
+
+                    <!-- Tên nhân viên với màu chữ trắng -->
+                    <span class="text-white mt-2">@User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value</span>
+                </a>
+            </header>
+            <nav class="dashboard-nav-list">
+                <a class="dashboard-nav-item" asp-area="NhanVien" asp-controller="Home" asp-action="Index">
+                    <i class="fas fa-home"></i>
+                    Trang chủ
+                </a>
+                <a class="dashboard-nav-item" asp-area="NhanVien" asp-controller="NVChamCong" asp-action="Index">
+                    <i class="fa-solid fa-clock"></i>
+                    Lịch sử chấm công
+                </a>
+                <a asp-area="NhanVien" asp-controller="NghiPhepNV" asp-action="Index" class="dashboard-nav-item">
+                    <i class="fa-solid fa-newspaper"></i>Nghỉ phép
+                </a>
+               
+                <div class='dashboard-nav-dropdown'>
+                    <a href="#!" class="dashboard-nav-item dashboard-nav-dropdown-toggle">
+                        <i class="fas fa-money-check-alt"></i> Lương
+                    </a>
+                    <div class='dashboard-nav-dropdown-menu'>
+                        <a asp-area="NhanVien" asp-controller="NVChamCong" asp-action="TongCongThangNV" class="dashboard-nav-dropdown-item">Tổng hợp công</a>
+
+                        <a asp-area="NhanVien" asp-controller="NVLuong" asp-action="Index" class="dashboard-nav-dropdown-item">Bảng lương</a>
+
+                    </div>
+                </div>
+                <a asp-area="NhanVien" asp-controller="NVThongTin" asp-action="Index" class="dashboard-nav-item">
+                    <i class="fa-solid fa-user"></i>Thông tin cá nhân
+                </a>
+                
+                
+
+                @* <a href="#" class="dashboard-nav-item"><i class="fas fa-user"></i> Profile </a> *@
+                <div class="nav-item-divider"></div>
+                <a asp-controller="DangNhap" asp-action="Logout" class="dashboard-nav-item"><i class="fas fa-sign-out-alt"></i> Đăng xuất </a>
+            </nav>
+        </div>
+        <div class='dashboard-app'>
+            <header class='dashboard-toolbar'><a href="#!" class="menu-toggle"><i class="fas fa-bars"></i></a></header>
+            <div class='dashboard-content'>
+                @RenderBody()
+               
+            </div>
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+
+</body>
+</html>
+
